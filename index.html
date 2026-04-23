@@ -5467,7 +5467,15 @@
       });
       mkBtn('🔄 Tekrar', () => { document.getElementById('overlay').classList.remove('show'); initGame(); });
       mkBtn('⚙️ Zorluk Seç', () => { document.getElementById('overlay').classList.remove('show'); openRaceLevelSelect(); });
-      mkBtn('🏠 Modlar', () => { document.getElementById('overlay').classList.remove('show'); currentMode = 'serbest'; updateModeUI('serbest'); initGame(); });
+      mkBtn('🏠 Modlar', () => {
+        document.getElementById('overlay').classList.remove('show');
+        gameHasStarted = false;
+        currentMode = 'serbest';
+        updateModeUI('serbest');
+        const ss = document.getElementById('start-screen');
+        ss.classList.remove('hidden');
+        ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
+      });
       document.getElementById('overlay').classList.add('show');
     }
 
