@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="gece">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,67 +16,7 @@
   <style>
     /* ── Tema değişkenleri ─────────────────────────────────────── */
 
-    [data-theme="gece"] {
-      --bg:            #0f172a;
-      --surface:       #1e293b;
-      --surface2:      #334155;
-      --border:        #334155;
-      --text:          #e2e8f0;
-      --text-muted:    #94a3b8;
-      --accent:        #38bdf8;
-      --accent-dim:    #0369a1;
-      --cell-empty:    #0f172a;
-      --cell-border:   #1e293b;
-      --cell-hover-bg: #1e3a5f;
-      --cell-filled:   #1e3a5f;
-      --cell-filled-border: #2563eb;
-      --cell-filled-text:   #93c5fd;
-      --cell-last:     #1e40af;
-      --cell-last-border:   #60a5fa;
-      --cell-last-glow:     #3b82f680;
-      --cell-valid:    #0c2a1a;
-      --cell-valid-border:  #22c55e;
-      --cell-valid-hover:   #166534;
-      --flash-bg:      #450a0a;
-      --flash-border:  #ef4444;
-      --overlay-bg:    #00000099;
-      --btn-secondary: #334155;
-      --btn-secondary-text: #e2e8f0;
-      --win-color:     #4ade80;
-      --lose-color:    #f87171;
-    }
-
-    [data-theme="okyanus"] {
-      --bg:            #042f4b;
-      --surface:       #063b5e;
-      --surface2:      #0c4f7a;
-      --border:        #0e6fa3;
-      --text:          #cffafe;
-      --text-muted:    #67e8f9;
-      --accent:        #22d3ee;
-      --accent-dim:    #0891b2;
-      --cell-empty:    #032135;
-      --cell-border:   #063b5e;
-      --cell-hover-bg: #0c4f7a;
-      --cell-filled:   #0a4060;
-      --cell-filled-border: #0891b2;
-      --cell-filled-text:   #a5f3fc;
-      --cell-last:     #0e7490;
-      --cell-last-border:   #22d3ee;
-      --cell-last-glow:     #06b6d480;
-      --cell-valid:    #042f2f;
-      --cell-valid-border:  #10b981;
-      --cell-valid-hover:   #064e3b;
-      --flash-bg:      #4c0519;
-      --flash-border:  #fb7185;
-      --overlay-bg:    #00000099;
-      --btn-secondary: #0c4f7a;
-      --btn-secondary-text: #cffafe;
-      --win-color:     #34d399;
-      --lose-color:    #fb7185;
-    }
-
-    [data-theme="gunbatimi"] {
+    :root {
       --bg:            #1a0a1e;
       --surface:       #2d1538;
       --surface2:      #3d1f50;
@@ -203,7 +143,7 @@
       justify-content: space-between;
       margin-bottom: 8px;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     #streak-badge {
@@ -222,31 +162,57 @@
     #streak-badge .flame { font-size: 1rem; }
     #streak-badge.active-streak { border-color: #f97316; color: #f97316; }
 
-    #mode-tabs {
-      display: flex;
-      gap: 4px;
-      background: var(--surface);
-      border-radius: 10px;
-      padding: 4px;
-      border: 1px solid var(--border);
-    }
+    #mode-select-wrap { position: relative; }
 
-    .mode-tab {
-      padding: 5px 14px;
-      border-radius: 7px;
-      font-size: 0.78rem;
+    #btn-mode-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--accent-dim);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #btn-mode-select::after { content: ' ▾'; font-size: 0.7rem; opacity: .8; }
+
+    #mode-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px;
+      z-index: 500;
+      min-width: 160px;
+      box-shadow: 0 8px 24px #0008;
+    }
+    #mode-dropdown.open { display: flex; flex-direction: column; gap: 2px; }
+
+    .mode-opt {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      transition: background 0.2s, color 0.2s;
+      text-align: left;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
     }
-
-    .mode-tab.active {
-      background: var(--accent-dim);
-      color: #fff;
-    }
+    .mode-opt:hover { background: var(--surface2); color: var(--text); }
+    .mode-opt.active { background: var(--accent-dim); color: #fff; }
 
     /* ── Info bar ───────────────────────────────────────────────── */
     #info-bar {
@@ -350,6 +316,8 @@
       border-radius: 10px;
       padding: 8px;
       transition: background 0.3s, border-color 0.3s;
+      position: relative;
+      z-index: 0;
     }
 
     .cell {
@@ -444,7 +412,7 @@
       cursor: default;
     }
 
-    .cell.mandatory-next {
+    .cell.mandatory-next, .cell.last.start-blink {
       background: #2d1a00;
       border-color: #f59e0b;
       color: #fcd34d;
@@ -534,30 +502,6 @@
     #btn-undo:disabled { opacity: 0.3; cursor: default; transform: none; }
 
     /* ── Tema seçici ─────────────────────────────────────────────── */
-    #theme-bar {
-      margin-top: 10px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    #theme-bar span { font-size: 0.8rem; color: var(--text-muted); margin-right: 4px; }
-
-    .theme-btn {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      cursor: pointer; padding: 0;
-      transition: transform 0.15s, border-color 0.15s;
-    }
-
-    .theme-btn:hover { transform: scale(1.2); opacity: 1; }
-    .theme-btn.active { border-color: var(--text) !important; transform: scale(1.15); }
-    .theme-btn[data-t="gece"]     { background: linear-gradient(135deg, #0f172a 50%, #38bdf8 50%); }
-    .theme-btn[data-t="okyanus"]  { background: linear-gradient(135deg, #042f4b 50%, #22d3ee 50%); }
-    .theme-btn[data-t="gunbatimi"]{ background: linear-gradient(135deg, #1a0a1e 50%, #f472b6 50%); }
 
     /* ── Kurallar ────────────────────────────────────────────────── */
     #rules {
@@ -805,6 +749,8 @@
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(80px);
+      opacity: 0;
+      pointer-events: none;
       background: var(--surface);
       border: 2px solid var(--accent);
       border-radius: 14px;
@@ -814,17 +760,60 @@
       gap: 12px;
       z-index: 100;
       box-shadow: 0 8px 32px #00000060;
-      transition: transform 0.4s cubic-bezier(.22,1,.36,1);
+      transition: transform 0.4s cubic-bezier(.22,1,.36,1), opacity 0.4s;
       min-width: 260px;
       max-width: 320px;
     }
 
-    #ach-toast.show { transform: translateX(-50%) translateY(0); }
+    #ach-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
 
     #ach-toast .toast-icon { font-size: 2rem; }
     #ach-toast .toast-text .toast-title { font-size: 0.7rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
     #ach-toast .toast-text .toast-name  { font-size: 0.95rem; font-weight: 700; color: var(--text); }
     #ach-toast .toast-text .toast-xp    { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* ── İpucu geri alma bildirimi ───────────────────────────────── */
+    #hint-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.88);
+      background: #1e293b;
+      border: 2px solid #f5a623;
+      border-radius: 16px;
+      padding: 20px 28px;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: 0 8px 40px #000a;
+      z-index: 9999;
+      transition: transform 0.35s cubic-bezier(.22,1,.36,1), opacity 0.35s;
+      opacity: 0;
+      pointer-events: none;
+      text-align: center;
+      max-width: min(88vw, 340px);
+      line-height: 1.5;
+    }
+    #hint-toast.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #hint-toast { white-space: pre-line; }
+    #hint-toast-btn {
+      display: block;
+      margin: 14px auto 0;
+      padding: 8px 24px;
+      background: #f5a623;
+      color: #0f172a;
+      border: none;
+      border-radius: 10px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    #hint-toast-btn:hover { background: #fbbf24; }
 
     /* XP floating text */
     .xp-float {
@@ -1157,10 +1146,12 @@
       position: fixed; inset: 0;
       background: #000000cc;
       z-index: 30;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 16px;
+      box-sizing: border-box;
       overflow-y: auto;
+      overflow-x: hidden;
     }
 
     #puzzle-level-select.show { display: flex; }
@@ -1169,10 +1160,12 @@
       background: var(--surface);
       border: 2px solid #f59e0b;
       border-radius: 20px;
-      padding: 24px 20px;
+      padding: 20px 16px;
       max-width: 460px;
       width: 100%;
-      margin: auto;
+      box-sizing: border-box;
+      margin: auto 0;
+      flex-shrink: 0;
     }
 
     #pls-header {
@@ -1235,16 +1228,19 @@
     .pls-cards-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
+      min-width: 0;
     }
 
     .pls-card {
       border-radius: 12px;
-      padding: 14px 12px;
+      padding: 12px 10px;
       cursor: pointer;
       border: 2px solid transparent;
       transition: transform 0.15s, border-color 0.15s;
       position: relative;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .pls-card:hover:not(.pls-locked) { transform: translateY(-2px); }
@@ -1295,6 +1291,8 @@
     .pls-card-stops {
       font-size: 0.68rem;
       color: var(--text-muted);
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
 
     .pls-badge {
@@ -1311,6 +1309,228 @@
     }
 
     /* ── Zaman seviye seçimi ────────────────────────────────────── */
+    /* ── Yarış Modu Layout ───────────────────────────────────── */
+    #race-boards {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      justify-content: center;
+      width: 100%;
+      max-width: 580px;
+    }
+    .race-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .race-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    #bot-grid {
+      display: grid;
+      gap: 3px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      position: relative;
+      z-index: 0;
+      transition: opacity .3s;
+    }
+    #race-score-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 8px;
+      padding: 8px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 580px;
+    }
+    #race-undo-bar {
+      display: flex;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    #btn-race-undo {
+      padding: 7px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      opacity: 1;
+      transition: opacity .2s;
+    }
+    #btn-race-undo:disabled { opacity: 0.35; cursor: not-allowed; }
+    #btn-online-leave { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
+    #btn-online-leave:hover { background: #7f1d1d; border-color: #ef4444; }
+    .race-score-side {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .race-score-side span:last-child { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
+    .race-score-side.bot { color: #f59e0b; }
+    .race-vs {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: 1px;
+      text-align: center;
+      min-width: 36px;
+      transition: color .3s;
+    }
+    .race-vs.urgent { color: #ef4444; animation: timerPulse .5s ease-in-out infinite alternate; }
+
+    /* ── Odak Modu ───────────────────────────────────────────── */
+    #btn-focus-exit {
+      display: none;
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 600;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #fff;
+      padding: 7px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      backdrop-filter: blur(6px);
+      transition: background .2s;
+    }
+    #btn-focus-exit:hover { background: rgba(0,0,0,0.75); }
+
+    body.focus-mode #top-bar,
+    body.focus-mode #xp-bar-wrap,
+    body.focus-mode #meta-bar,
+    body.focus-mode #daily-header,
+    body.focus-mode #surprise-effect-bar,
+    body.focus-mode #puzzle-header,
+    body.focus-mode #info-bar,
+    body.focus-mode #controls,
+    body.focus-mode #rules,
+    body.focus-mode #hint-toast { display: none !important; }
+
+    body.focus-mode #race-boards {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      z-index: 500;
+    }
+    body.focus-mode #race-player-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    body.focus-mode #race-player-label { display: none !important; }
+    body.focus-mode #grid {
+      gap: 4px !important;
+      padding: 10px !important;
+      border-radius: 14px !important;
+      box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    }
+    body.focus-mode .cell {
+      width:  calc((min(96vw, 90vh) - 50px) / 10) !important;
+      height: calc((min(96vw, 90vh) - 50px) / 10) !important;
+      font-size: clamp(9px, calc((min(96vw, 90vh) - 50px) / 10 * 0.36), 28px) !important;
+      border-radius: 7px !important;
+    }
+    body.focus-mode #btn-focus-exit { display: block; }
+    @keyframes timerPulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+    .ss-card.ss-card-yaris { border-color: #22c55e44; }
+    .ss-card.ss-card-yaris:hover { border-color: #22c55e; box-shadow: 0 10px 28px rgba(34,197,94,0.18); }
+
+    /* ── Yarış Zorluk Seçimi ─────────────────────────────────── */
+    #race-level-select {
+      display: none; position: fixed; inset: 0;
+      background: #000000cc; z-index: 30;
+      align-items: center; justify-content: center; padding: 16px; overflow-y: auto;
+    }
+    #race-level-select.show { display: flex; }
+    #rls-box {
+      background: var(--surface); border: 2px solid var(--accent);
+      border-radius: 20px; padding: 24px 20px;
+      max-width: 400px; width: 100%; text-align: center;
+    }
+    #rls-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+    }
+    #rls-header h2 { font-size: 1.3rem; }
+    #rls-header button { background: var(--surface2); border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; color: var(--text); font-size: 1rem; }
+    #rls-subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px; line-height: 1.5; }
+    #rls-btns { display: flex; flex-direction: column; gap: 10px; }
+    .rls-btn {
+      padding: 14px 16px; border-radius: 12px; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; border: 2px solid transparent; background: var(--surface2);
+      color: var(--text); transition: all .2s; text-align: left;
+    }
+    .rls-btn:hover { border-color: var(--accent); }
+    .rls-btn.active { background: var(--accent-dim); color: #fff; border-color: var(--accent); }
+    .rls-btn.locked { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+    .rls-sep { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+    #btn-rls-online {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1a56a0 100%);
+      border-color: #3b82f6;
+      color: #93c5fd;
+      text-align: center;
+    }
+    #btn-rls-online:hover { background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%); border-color: #60a5fa; }
+
+    /* ── Online Waiting Overlay ─────────────────────────────── */
+    #online-waiting-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.78); z-index: 3000;
+      align-items: center; justify-content: center;
+    }
+    #online-waiting-overlay.show { display: flex; }
+    #online-waiting-box {
+      background: var(--surface); border: 2px solid #3b82f6;
+      border-radius: 20px; padding: 2rem 2.5rem;
+      text-align: center; max-width: 320px; width: 90%;
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    }
+    @keyframes online-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+    #online-waiting-anim { font-size: 3rem; animation: online-pulse 1.6s ease-in-out infinite; }
+    #online-waiting-title { margin: 0; font-size: 1.15rem; font-weight: 700; }
+    #online-waiting-sub   { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
+    #online-nick-section  { width: 100%; display: none; flex-direction: column; gap: 8px; }
+    #online-nick-inp {
+      width: 100%; padding: 8px 12px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text); font-size: 0.9rem; box-sizing: border-box;
+    }
+    #btn-online-connect {
+      width: 100%; padding: 10px; border-radius: 8px;
+      background: #3b82f6; color: #fff; border: none;
+      font-weight: 700; cursor: pointer; font-size: 0.9rem;
+    }
+    #btn-online-connect:hover { background: #2563eb; }
+    #btn-online-cancel {
+      margin-top: 4px; background: transparent;
+      border: 1px solid var(--border); color: var(--text-muted);
+      padding: 6px 20px; border-radius: 8px; cursor: pointer; font-size: 0.82rem;
+    }
+    #btn-online-cancel:hover { border-color: #ef4444; color: #ef4444; }
+
     #time-level-select {
       display: none;
       position: fixed; inset: 0;
@@ -1457,7 +1677,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: safe center;
       padding: 32px 20px 40px;
       overflow-y: auto;
       animation: ssIn 0.45s cubic-bezier(0.22,1,0.36,1);
@@ -1546,8 +1766,46 @@
     .ss-card.ss-card-daily:hover  { border-color: #f59e0b; box-shadow: 0 10px 28px rgba(245,158,11,0.18); }
     .ss-card.ss-card-timed  { border-color: #ef444444; }
     .ss-card.ss-card-timed:hover  { border-color: #ef4444; box-shadow: 0 10px 28px rgba(239,68,68,0.18); }
-    .ss-card.ss-card-puzzle { border-color: #a855f744; }
-    .ss-card.ss-card-puzzle:hover { border-color: #a855f7; box-shadow: 0 10px 28px rgba(168,85,247,0.18); }
+    .ss-card.ss-card-puzzle  { border-color: #a855f744; }
+    .ss-card.ss-card-puzzle:hover  { border-color: #a855f7; box-shadow: 0 10px 28px rgba(168,85,247,0.18); }
+    .ss-card.ss-card-surpriz { border-color: #f59e0b44; }
+    .ss-card.ss-card-surpriz:hover { border-color: #f59e0b; box-shadow: 0 10px 28px rgba(245,158,11,0.22); }
+
+    /* ── Sürpriz Mod hücre stilleri ─────────────────────────────── */
+    @keyframes surprise-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,.5); }
+      50%       { box-shadow: 0 0 0 7px rgba(245,158,11,0); }
+    }
+    .cell.surprise-cell {
+      background: rgba(245,158,11,.18) !important;
+      border-color: #f59e0b !important;
+      animation: surprise-pulse 1.8s infinite;
+      cursor: pointer;
+    }
+    .cell.blocked-cell {
+      background: #180808 !important;
+      border-color: #7f1d1d !important;
+      cursor: not-allowed;
+    }
+    @keyframes rescue-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); }
+      50%       { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+    }
+    .cell.rescue-cell {
+      background: rgba(34,197,94,.18) !important;
+      border-color: #22c55e !important;
+      animation: rescue-pulse 1.4s infinite;
+      cursor: pointer;
+    }
+    #surprise-effect-bar {
+      font-size: .75rem; font-weight: 600;
+      padding: 5px 10px; background: rgba(245,158,11,.12);
+      color: #fcd34d; border-radius: 8px;
+      margin-bottom: 6px; min-height: 0;
+      text-align: center; display: none;
+      border: 1px solid rgba(245,158,11,.3);
+    }
+    #surprise-effect-bar.active { display: block; }
 
     .ss-card-icon  { font-size: 2.2rem; display: block; margin-bottom: 10px; }
     .ss-card-name  { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 5px; letter-spacing: 0.3px; }
@@ -1626,6 +1884,16 @@
         <div class="ss-card-name" data-i18n="mode.zaman">Zaman</div>
         <div class="ss-card-desc" data-i18n="mode.zaman.desc">Süre dolmadan olabildiğince ilerle</div>
       </div>
+      <div class="ss-card ss-card-surpriz" data-mode="surpriz">
+        <span class="ss-card-icon">⚡</span>
+        <div class="ss-card-name" data-i18n="mode.surpriz">Sürpriz</div>
+        <div class="ss-card-desc" data-i18n="mode.surpriz.desc">Her adımda beklenmedik olaylar!</div>
+      </div>
+      <div class="ss-card ss-card-yaris" data-mode="yaris">
+        <span class="ss-card-icon">🏁</span>
+        <div class="ss-card-name" data-i18n="mode.yaris">Yarış</div>
+        <div class="ss-card-desc" data-i18n="mode.yaris.desc">Bot'a karşı yarış, daha fazlasını yerleştir!</div>
+      </div>
     </div>
 
     <div class="ss-footer">
@@ -1652,11 +1920,16 @@
   <!-- Streak + Mod seçici -->
   <div id="meta-bar">
     <div id="streak-badge"><span class="flame">🔥</span> <span id="streak-num">0</span> <span data-i18n="label.streak">gün serisi</span></div>
-    <div id="mode-tabs">
-      <button class="mode-tab active" data-mode="serbest" data-i18n="mode.klasik">Klasik</button>
-      <button class="mode-tab"        data-mode="gunluk">📅 <span data-i18n="mode.gunluk">Günlük</span></button>
-      <button class="mode-tab"        data-mode="bulmaca">🧩 <span data-i18n="mode.bulmaca">Bulmaca</span></button>
-      <button class="mode-tab"        data-mode="zaman">⏱️ <span data-i18n="mode.zaman">Zaman</span></button>
+    <div id="mode-select-wrap">
+      <button id="btn-mode-select"><span id="mode-select-icon">🎮</span> <span id="mode-select-label" data-i18n="mode.klasik">Klasik</span></button>
+      <div id="mode-dropdown">
+        <button class="mode-opt active" data-mode="serbest">🎮 <span data-i18n="mode.klasik">Klasik</span></button>
+        <button class="mode-opt"        data-mode="gunluk">📅 <span data-i18n="mode.gunluk">Günlük</span></button>
+        <button class="mode-opt"        data-mode="bulmaca">🧩 <span data-i18n="mode.bulmaca">Bulmaca</span></button>
+        <button class="mode-opt"        data-mode="zaman">⏱️ <span data-i18n="mode.zaman">Zaman</span></button>
+        <button class="mode-opt"        data-mode="surpriz">⚡ <span data-i18n="mode.surpriz">Sürpriz</span></button>
+        <button class="mode-opt"        data-mode="yaris">🏁 <span data-i18n="mode.yaris">Yarış</span></button>
+      </div>
     </div>
   </div>
 
@@ -1664,6 +1937,9 @@
   <div id="daily-header">
     📅 <strong id="daily-title">Günün Bulmacası</strong> — <span id="daily-date"></span> &nbsp;|&nbsp; <span data-i18n="daily.header">Bu bulmaca bugün herkese aynı!</span>
   </div>
+
+  <!-- Sürpriz mod efekt çubuğu -->
+  <div id="surprise-effect-bar"></div>
 
   <!-- Bulmaca başlığı -->
   <div id="puzzle-header">
@@ -1678,7 +1954,24 @@
     <div id="hint" data-i18n="hint.default">İstediğin hücreye tıkla</div>
   </div>
 
-  <div id="grid"></div>
+  <div id="race-boards">
+    <div class="race-side" id="race-player-side">
+      <div class="race-label" id="race-player-label" style="display:none" data-i18n="race.player.you">SEN</div>
+      <div id="grid"></div>
+    </div>
+    <div class="race-side" id="race-bot-side" style="display:none">
+      <div class="race-label" id="race-bot-label">BOT</div>
+      <div id="bot-grid"></div>
+    </div>
+  </div>
+  <div id="race-score-bar" style="display:none">
+    <div class="race-score-side"><span id="race-player-score">0</span><span>/36</span></div>
+    <div class="race-vs"><span id="race-timer">90</span><span style="font-size:0.65rem;display:block;color:var(--text-muted)" data-i18n="race.sec">sn</span></div>
+    <div class="race-score-side bot"><span id="race-bot-score">0</span><span>/36</span></div>
+  </div>
+  <div id="race-undo-bar" style="display:none">
+    <button id="btn-race-undo" disabled data-i18n="btn.race.undo">↩ Geri Al 📺</button>
+  </div>
 
   <!-- ── İnteraktif Tutorial Overlay ──────────────────────────── -->
   <div id="it-overlay" style="display:none">
@@ -1701,15 +1994,12 @@
     <button id="btn-hint-best" style="display:none">💡 İpucu Al</button>
     <button id="btn-time-boost" style="display:none">⏱️ +30s (1)</button>
     <button id="btn-achievements" data-i18n="btn.achievements">🏅 Başarılar</button>
+    <button id="btn-focus" style="display:none" data-i18n="btn.focus">🔍 Odak</button>
+    <button id="btn-online-leave" style="display:none" data-i18n="online.leave">🚪 Terk Et</button>
   </div>
+  <button id="btn-focus-exit" data-i18n="btn.focus.exit">✕ Odaktan Çık</button>
 
   <!-- Tema seçici -->
-  <div id="theme-bar">
-    <span data-i18n="btn.theme">Tema:</span>
-    <button class="theme-btn active" data-t="gece"      title="Gece"></button>
-    <button class="theme-btn"        data-t="okyanus"   title="Okyanus"></button>
-    <button class="theme-btn"        data-t="gunbatimi" title="Günbatımı"></button>
-  </div>
 
   <div id="rules"></div>
 
@@ -1744,7 +2034,7 @@
   <!-- ── Global Skor Submit Modal ─────────────────────────────── -->
   <div id="global-submit-modal">
     <div id="global-submit-box">
-      <h3 data-i18n="modal.submit.title">🏆 Skoru Gönder</h3>
+      <h3 id="global-submit-title" data-i18n="modal.submit.title">🏆 Skoru Gönder</h3>
       <div id="global-submit-score"></div>
       <input id="global-nickname-input" type="text" maxlength="20" placeholder="Nicknameni gir..." data-i18n="modal.submit.ph" data-i18n-attr="placeholder" autocomplete="off" />
       <div id="global-submit-msg"></div>
@@ -1758,7 +2048,7 @@
   <!-- ── Global Skor Tablosu Modal ─────────────────────────────── -->
   <div id="global-scores-modal">
     <div id="global-scores-box">
-      <h2 data-i18n="modal.global.title">🏆 Skorlar</h2>
+      <h2 id="global-scores-title" data-i18n="modal.global.title">🏆 Skorlar</h2>
       <div id="global-scores-status" data-i18n="global.loading">Yükleniyor...</div>
       <div id="global-scores-list"></div>
       <button id="btn-global-scores-close" data-i18n="modal.close">Kapat</button>
@@ -1786,12 +2076,17 @@
     </div>
   </div>
 
+  <div id="hint-toast">
+    <span id="hint-toast-msg"></span>
+    <button id="hint-toast-btn" onclick="document.getElementById('hint-toast').classList.remove('show')" style="display:none"></button>
+  </div>
+
   <!-- ── Bulmaca tanıtım modalı ──────────────────────────────── -->
   <div id="puzzle-intro">
     <div id="puzzle-intro-box">
       <div id="pi-icon">🧩</div>
       <h2 id="pi-title" data-i18n="puzzle.intro.title">Bulmaca Modu</h2>
-      <p id="pi-subtitle">Grid üzerinde <strong>altın renkli</strong> zorunlu duraklar belirir.</p>
+      <p id="pi-subtitle" data-i18n="pi.sub.puzzle">Grid üzerinde <strong>altın renkli</strong> zorunlu duraklar belirir.</p>
 
       <!-- Günün / aktif bulmacasının bilgisi -->
       <div id="pi-puzzle-info"></div>
@@ -1862,11 +2157,43 @@
     </div>
   </div>
 
+  <!-- ── Yarış zorluğu seçimi ─────────────────────────────────── -->
+  <div id="race-level-select">
+    <div id="rls-box">
+      <div id="rls-header">
+        <h2 data-i18n="race.modal.title">🏁 Yarış Modu</h2>
+        <button id="btn-rls-close">✕</button>
+      </div>
+      <p id="rls-subtitle" data-i18n="race.modal.subtitle">6×6 tahtada bot'a karşı yarış — daha fazla hücreyi dolduran kazanır!</p>
+      <div id="rls-btns">
+        <button class="rls-btn active" data-diff="kolay" data-i18n="race.easy">🟢 Kolay</button>
+        <button class="rls-btn" data-diff="orta" data-i18n="race.medium">🟡 Orta</button>
+        <button class="rls-btn" data-diff="zor" data-i18n="race.hard">🔴 Zor</button>
+        <hr class="rls-sep">
+        <button id="btn-rls-online" class="rls-btn" data-i18n="race.online">🌐 Online Yarış</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Online Yarış Bekleme Overlay ────────────────────────────── -->
+  <div id="online-waiting-overlay">
+    <div id="online-waiting-box">
+      <div id="online-waiting-anim">🌐</div>
+      <h2 id="online-waiting-title" data-i18n="online.waiting.title">Rakip Aranıyor...</h2>
+      <p id="online-waiting-sub" data-i18n="online.waiting.sub">Seni bekleyen birini arıyoruz</p>
+      <div id="online-nick-section">
+        <input id="online-nick-inp" type="text" maxlength="20" autocomplete="off">
+        <button id="btn-online-connect" data-i18n="online.connect.btn">🔍 Ara</button>
+      </div>
+      <button id="btn-online-cancel" data-i18n="online.waiting.cancel">İptal</button>
+    </div>
+  </div>
+
   <!-- ── Bulmaca seviye seçimi ─────────────────────────────────── -->
   <div id="puzzle-level-select">
     <div id="pls-box">
       <div id="pls-header">
-        <h2>🧩 Bulmacalar</h2>
+        <h2 data-i18n="pls.title">🧩 Bulmacalar</h2>
         <button id="btn-pls-close">✕</button>
       </div>
       <p id="pls-subtitle" data-i18n="pls.subtitle">Çözdüğün bulmacaları tekrar oynayabilir, sıradakine geçebilirsin.</p>
@@ -1904,10 +2231,6 @@
         'btn.hint.best':        '💡 En İyi Hamle',
         'btn.hint.take':        '💡 İpucu Al',
         'btn.achievements':     '🏅 Başarılar',
-        'btn.theme':            'Tema:',
-        'theme.gece':           'Gece',
-        'theme.okyanus':        'Okyanus',
-        'theme.gunbatimi':      'Günbatımı',
         'hint.default':         'İstediğin hücreye tıkla',
         'hint.valid':           'Yeşil hücrelerden birine tıkla',
         'hint.next':            'Sonraki sayıyı yerleştir',
@@ -1917,6 +2240,7 @@
         'hint.start.mini':      'Altın hücreden başla — tüm ızgarayı doldur!',
         'hint.start.puzzle':    '1 numaralı altın hücreye tıkla',
         'hint.undo.prefix':     ' hamle geri alındı — bu hücreye git!',
+        'hint.unreachable':     'Hatalı hamle tespit edildi — {n} adım geri alındı, doğru yol bulundu',
         'hint.next.stop':       '. numaralı altın hücreye ulaş!',
         'win.classic':          '🎉 Kazandın!',
         'win.classic.msg':      'Tüm 100 kareyi başarıyla doldurdun!',
@@ -1935,6 +2259,7 @@
         'lose.mini.msg':        '{n}. sayıda sıkıştın. Son hamleyi geri alarak devam edebilirsin!',
         'lose.time.msg':        "Bölüm {idx}'de kaldın — toplam {score} hücre doldurdun.",
         'score.top5':           'En İyi 5',
+        'score.top5.surpriz':   '⚡ Sürpriz Modu En İyi 5',
         'score.record':         '🏅 Yeni Rekor!',
         'score.rank':           'Bu oyun: #{rank}. sıra',
         'score.record.time':    '🏅 Yeni Rekor! {score} hücre',
@@ -1963,7 +2288,9 @@
         'modal.scores.title':   '🏆 Skorlarım',
         'modal.scores.reset':   'Sıfırla',
         'modal.close':          'Kapat',
-        'modal.global.title':   '🏆 Skorlar',
+        'modal.global.title':         '🏆 Skorlar',
+        'modal.global.title.surpriz': '⚡ Sürpriz Modu Skor Tablosu',
+        'modal.submit.title.surpriz': '⚡ Sürpriz Skoru Gönder',
         'modal.ach.title':      '🏅 Başarılar',
         'modal.ach.progress':   '{n} / {t} başarı açıldı',
         'modal.ad.title':       '📺 Reklam İzle',
@@ -2037,6 +2364,30 @@
         'ach.mini_first.desc':  'İlk Mini Grid bulmacasını tamamladın.',
         'ach.mini_all.name':    'Grid Hakimi',
         'ach.mini_all.desc':    'Tüm Mini Grid bulmacalarını tamamladın.',
+        'ach.cat.surpriz':              '⚡ Sürpriz Modu',
+        'ach.surpriz_first.name':       'Kaosa Hoş Geldin',
+        'ach.surpriz_first.desc':       'Sürpriz modda ilk hamleyi yaptın.',
+        'ach.surpriz_bomb.name':        'Mayın Tarlası',
+        'ach.surpriz_bomb.desc':        'Sürpriz modda bir bombaya bastın.',
+        'ach.surpriz_rescue.name':      'Kurtarıcı',
+        'ach.surpriz_rescue.desc':      'Bloke hücrelerden kurtulmak için 🔓 butonunu kullandın.',
+        'ach.surpriz_jump.name':        'Serbest Ruh',
+        'ach.surpriz_jump.desc':        'Serbest atlama olayını tetikledin.',
+        'ach.surpriz_score50.name':     'Kaos Ustası',
+        'ach.surpriz_score50.desc':     'Sürpriz modda 50 veya üzeri skor yaptın.',
+        'ach.surpriz_score75.name':     'Kaos Efendisi',
+        'ach.surpriz_score75.desc':     'Sürpriz modda 75 veya üzeri skor yaptın.',
+        'ach.surpriz_winner.name':      'Kaos Tanrısı',
+        'ach.surpriz_winner.desc':      'Sürpriz modda tüm 100 sayıyı yerleştirdin.',
+        'ach.cat.yaris':                '🏁 Yarış Modu',
+        'ach.race_first_win.name':      'İlk Zafer',
+        'ach.race_first_win.desc':      'Yarış modunda ilk kez kazandın.',
+        'ach.race_perfect.name':        'Mükemmel Yarış',
+        'ach.race_perfect.desc':        'Yarış modunda 36 hücrenin tamamını doldurdun.',
+        'ach.race_hard_win.name':       'Bot Avcısı',
+        'ach.race_hard_win.desc':       'Zor modda botu yendin.',
+        'ach.race_close.name':          'Kıl Payı',
+        'ach.race_close.desc':          '1 puan farkla yarışı kazandın.',
         'tut.s.t1': '100 Oyununa Hoş Geldin!',
         'tut.s.d1': `Amaç basit: <strong>10×10 grid</strong>i <strong>1'den 100'e</strong> kadar sayılarla doldurmak.<br><br>Her tıklamada sıradaki sayı seçtiğin hücreye yerleşir. Ama her hücreye gidemezsin — <strong>hareket kuralları</strong> var!`,
         'tut.s.t2': 'Yatay & Dikey Hareket',
@@ -2115,6 +2466,64 @@
         'pi.mini.step3':           'Izgaradaki <strong>tüm hücreleri</strong> doldurman gerekiyor.',
         'pi.mini.step4':           'Tüm hücreleri doldurursan <strong>kazanırsın!</strong>',
         'rules.label':             'Kurallar',
+        'mode.surpriz':            'Sürpriz',
+        'mode.surpriz.desc':       'Her adımda beklenmedik olaylar!',
+        'mode.yaris':              'Yarış',
+        'mode.yaris.desc':         'Bot\'a karşı yarış, daha fazlasını yerleştir!',
+        'race.modal.title':        '🏁 Yarış Modu',
+        'race.modal.subtitle':     '6×6 tahtada bot\'a karşı yarış — daha fazla hücreyi dolduran kazanır!',
+        'race.easy':               '🟢 Kolay',
+        'race.medium':             '🟡 Orta',
+        'race.hard':               '🔴 Zor',
+        'surprise.rule_flip.title':'⚡ Kural Değişti!',
+        'surprise.rule_flip.desc': 'Yatay/Dikey: 3 adım → 2 adım\nÇapraz: 2 adım → 3 adım\n(5 hamle sürer)',
+        'surprise.hv_only.title':  '➡️ Sadece Yatay/Dikey!',
+        'surprise.hv_only.desc':   'Çapraz hamle yasak — 4 hamle süreyle',
+        'surprise.diag_only.title':'↗️ Sadece Çapraz!',
+        'surprise.diag_only.desc': 'Yatay/dikey yasak — 4 hamle süreyle',
+        'surprise.bonus_xp.title': '⭐ Bonus XP!',
+        'surprise.bonus_xp.desc':  '3× XP kazanıyorsun — 5 hamle süreyle',
+        'surprise.blocker.title':  '💣 Bomba!',
+        'surprise.blocker.desc':   '3 hücre bloke edildi! 🔓 butonuna bas kurtarmak için.',
+        'surprise.rescue.used':    '🔓 Bloke hücreler kurtarıldı!',
+        'surprise.free_jump.title':'🌀 Serbest Atlama!',
+        'surprise.free_jump.desc': 'Sonraki hamle istediğin boş hücreye!',
+        'surprise.expired':        'Etki bitti',
+        'surprise.toast.ok':       'Anladım',
+        'surprise.bar.moves':      ' hamle kaldı',
+        'win.surpriz':             '🎉 Tebrikler!',
+        'win.surpriz.msg':         'Tüm sürprizlerle başa çıkarak 100e ulaştın!',
+        'lose.surpriz':            '💀 Oyun Bitti',
+        'race.player.you':         'SEN',
+        'race.sec':                'sn',
+        'btn.race.undo':           '↩ Geri Al 📺',
+        'pi.sub.puzzle':           'Grid üzerinde <strong>altın renkli</strong> zorunlu duraklar belirir.',
+        'pls.title':               '🧩 Bulmacalar',
+        'race.online':             '🌐 Online Yarış',
+        'online.waiting.title':    'Rakip Aranıyor...',
+        'online.waiting.sub':      'Seni bekleyen birini arıyoruz',
+        'online.waiting.cancel':   'İptal',
+        'online.connect.btn':      '🔍 Ara',
+        'online.nick.label':       'Kullanıcı adı',
+        'online.nick.sub':         'Yarışmak için kullanıcı adı gir',
+        'online.matched.title':    'Rakip Bulundu!',
+        'online.matched.sub':      ' ile eşleşildi — başlıyor!',
+        'online.win':              '🏆 Kazandın!',
+        'online.lose':             '💔 Kaybettin!',
+        'online.draw':             '🤝 Berabere!',
+        'online.result.msg':       'Sen: {a} — {nick}: {b}',
+        'online.disconnected':     'Rakip bağlantıyı kesti — Kazandın!',
+        'online.error':            'Sunucuya bağlanılamadı.',
+        'online.replay':           '🔄 Tekrar Oyna',
+        'online.change.mode':      '🤖 Bota Karşı Oyna',
+        'online.home':             '🏠 Modlar',
+        'online.rematch':          '🔄 Rematch',
+        'online.rematch.waiting':  '⏳ Rakip bekleniyor...',
+        'online.rematch.opp':      '🔄 Rematch! (Rakip bekliyor)',
+        'online.new.game':         '🌐 Yeni Rakip Bul',
+        'online.leave':            '🚪 Terk Et',
+        'btn.focus':               '🔍 Odak',
+        'btn.focus.exit':          '✕ Odaktan Çık',
       },
       en: {
         'tagline':              'Place 1 to 100 — in order, by the rules',
@@ -2141,10 +2550,6 @@
         'btn.hint.best':        '💡 Best Move',
         'btn.hint.take':        '💡 Get Hint',
         'btn.achievements':     '🏅 Achievements',
-        'btn.theme':            'Theme:',
-        'theme.gece':           'Night',
-        'theme.okyanus':        'Ocean',
-        'theme.gunbatimi':      'Sunset',
         'hint.default':         'Tap any cell to place',
         'hint.valid':           'Tap one of the green cells',
         'hint.next':            'Place the next number',
@@ -2154,6 +2559,7 @@
         'hint.start.mini':      'Start from the golden cell — fill every cell!',
         'hint.start.puzzle':    'Tap the golden cell for number 1',
         'hint.undo.prefix':     ' move(s) undone — go to this cell!',
+        'hint.unreachable':     'Wrong move detected — {n} step(s) undone, correct path found',
         'hint.next.stop':       '. — reach the golden cell!',
         'win.classic':          '🎉 You Won!',
         'win.classic.msg':      'You successfully filled all 100 cells!',
@@ -2172,6 +2578,7 @@
         'lose.mini.msg':        'Stuck at number {n}. Undo your last move to continue!',
         'lose.time.msg':        'You made it to Level {idx} — {score} cells total.',
         'score.top5':           'Top 5',
+        'score.top5.surpriz':   '⚡ Surprise Mode Top 5',
         'score.record':         '🏅 New Record!',
         'score.rank':           'This game: #{rank}',
         'score.record.time':    '🏅 New Record! {score} cells',
@@ -2200,7 +2607,9 @@
         'modal.scores.title':   '🏆 My Scores',
         'modal.scores.reset':   'Reset',
         'modal.close':          'Close',
-        'modal.global.title':   '🏆 Leaderboard',
+        'modal.global.title':         '🏆 Leaderboard',
+        'modal.global.title.surpriz': '⚡ Surprise Mode Leaderboard',
+        'modal.submit.title.surpriz': '⚡ Submit Surprise Score',
         'modal.ach.title':      '🏅 Achievements',
         'modal.ach.progress':   '{n} / {t} achievements unlocked',
         'modal.ad.title':       '📺 Watch Ad',
@@ -2274,6 +2683,30 @@
         'ach.mini_first.desc':  'Completed your first Mini Grid puzzle.',
         'ach.mini_all.name':    'Grid Master',
         'ach.mini_all.desc':    'Completed all Mini Grid puzzles.',
+        'ach.cat.surpriz':              '⚡ Surprise Mode',
+        'ach.surpriz_first.name':       'Welcome to Chaos',
+        'ach.surpriz_first.desc':       'Made your first move in Surprise mode.',
+        'ach.surpriz_bomb.name':        'Minefield',
+        'ach.surpriz_bomb.desc':        'Triggered a bomb in Surprise mode.',
+        'ach.surpriz_rescue.name':      'Rescue Ranger',
+        'ach.surpriz_rescue.desc':      'Used the 🔓 button to escape blocked cells.',
+        'ach.surpriz_jump.name':        'Free Spirit',
+        'ach.surpriz_jump.desc':        'Triggered the free jump event.',
+        'ach.surpriz_score50.name':     'Chaos Master',
+        'ach.surpriz_score50.desc':     'Scored 50 or more in Surprise mode.',
+        'ach.surpriz_score75.name':     'Chaos Lord',
+        'ach.surpriz_score75.desc':     'Scored 75 or more in Surprise mode.',
+        'ach.surpriz_winner.name':      'Chaos God',
+        'ach.surpriz_winner.desc':      'Placed all 100 numbers in Surprise mode.',
+        'ach.cat.yaris':                '🏁 Race Mode',
+        'ach.race_first_win.name':      'First Victory',
+        'ach.race_first_win.desc':      'Won a race for the first time.',
+        'ach.race_perfect.name':        'Perfect Race',
+        'ach.race_perfect.desc':        'Filled all 36 cells in Race mode.',
+        'ach.race_hard_win.name':       'Bot Hunter',
+        'ach.race_hard_win.desc':       'Beat the bot on Hard difficulty.',
+        'ach.race_close.name':          'By a Thread',
+        'ach.race_close.desc':          'Won a race by just 1 point.',
         'tut.s.t1': 'Welcome to 100 Game!',
         'tut.s.d1': `The goal is simple: fill the <strong>10×10 grid</strong> with numbers <strong>1 to 100</strong>.<br><br>Each tap places the next number in the selected cell. But you can't go anywhere — there are <strong>movement rules</strong>!`,
         'tut.s.t2': 'Horizontal & Vertical',
@@ -2352,6 +2785,64 @@
         'pi.mini.step3':           'You must fill <strong>every cell</strong> in the grid.',
         'pi.mini.step4':           'Fill all cells and you <strong>win!</strong>',
         'rules.label':             'Rules',
+        'mode.surpriz':            'Surprise',
+        'mode.surpriz.desc':       'Unexpected events at every step!',
+        'mode.yaris':              'Race',
+        'mode.yaris.desc':         'Race the bot — place more numbers to win!',
+        'race.modal.title':        '🏁 Race Mode',
+        'race.modal.subtitle':     'Race the bot on a 6×6 board — place more numbers to win!',
+        'race.easy':               '🟢 Easy',
+        'race.medium':             '🟡 Medium',
+        'race.hard':               '🔴 Hard',
+        'surprise.rule_flip.title':'⚡ Rules Changed!',
+        'surprise.rule_flip.desc': 'Horizontal/Vertical: 3 steps → 2 steps\nDiagonal: 2 steps → 3 steps\n(lasts 5 moves)',
+        'surprise.hv_only.title':  '➡️ Horizontal/Vertical Only!',
+        'surprise.hv_only.desc':   'No diagonal moves — 4 moves',
+        'surprise.diag_only.title':'↗️ Diagonal Only!',
+        'surprise.diag_only.desc': 'No horizontal/vertical moves — 4 moves',
+        'surprise.bonus_xp.title': '⭐ Bonus XP!',
+        'surprise.bonus_xp.desc':  '3× XP earned — 5 moves',
+        'surprise.blocker.title':  '💣 Bomb!',
+        'surprise.blocker.desc':   '3 cells blocked! Press 🔓 button to rescue.',
+        'surprise.rescue.used':    '🔓 Blocked cells rescued!',
+        'surprise.free_jump.title':'🌀 Free Jump!',
+        'surprise.free_jump.desc': 'Next move can go to any empty cell!',
+        'surprise.expired':        'Effect expired',
+        'surprise.toast.ok':       'Got it',
+        'surprise.bar.moves':      ' moves left',
+        'win.surpriz':             '🎉 Congratulations!',
+        'win.surpriz.msg':         'You conquered all surprises and reached 100!',
+        'lose.surpriz':            '💀 Game Over',
+        'race.player.you':         'YOU',
+        'race.sec':                's',
+        'btn.race.undo':           '↩ Undo 📺',
+        'pi.sub.puzzle':           'Golden <strong>mandatory stops</strong> appear on the grid.',
+        'pls.title':               '🧩 Puzzles',
+        'race.online':             '🌐 Online Race',
+        'online.waiting.title':    'Looking for Opponent...',
+        'online.waiting.sub':      'Searching for someone to race',
+        'online.waiting.cancel':   'Cancel',
+        'online.connect.btn':      '🔍 Search',
+        'online.nick.label':       'Nickname',
+        'online.nick.sub':         'Enter a nickname to start racing',
+        'online.matched.title':    'Opponent Found!',
+        'online.matched.sub':      ' matched — starting!',
+        'online.win':              '🏆 You Won!',
+        'online.lose':             '💔 You Lost!',
+        'online.draw':             '🤝 It\'s a Draw!',
+        'online.result.msg':       'You: {a} — {nick}: {b}',
+        'online.disconnected':     'Opponent disconnected — You Win!',
+        'online.error':            'Could not connect to server.',
+        'online.replay':           '🔄 Play Again',
+        'online.change.mode':      '🤖 Play vs Bot',
+        'online.home':             '🏠 Modes',
+        'online.rematch':          '🔄 Rematch',
+        'online.rematch.waiting':  '⏳ Waiting for opponent...',
+        'online.rematch.opp':      '🔄 Rematch! (Opponent waiting)',
+        'online.new.game':         '🌐 Find New Opponent',
+        'online.leave':            '🚪 Leave',
+        'btn.focus':               '🔍 Focus',
+        'btn.focus.exit':          '✕ Exit Focus',
       }
     };
 
@@ -2493,13 +2984,13 @@
       timeModeScore       = 0;
       clearInterval(timerInterval);
       document.getElementById('time-level-select').classList.remove('show');
-      document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'zaman'));
+      updateModeUI('zaman');
       initGame();
     }
 
     document.getElementById('btn-tls-close').addEventListener('click', () => {
       document.getElementById('time-level-select').classList.remove('show');
-      document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === currentMode));
+      updateModeUI(currentMode);
       if (!gameHasStarted) {
         document.getElementById('start-screen').classList.remove('hidden');
         document.getElementById('start-screen').style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
@@ -2532,7 +3023,34 @@
     let itMode = false, itStep = 0, itPhase = 'read', itHvOnly = false, itDiagOnly = false;
     let history = [];
     let comboCount = 0;          // ardışık hamle sayısı (geri al sıfırlar)
-    let currentMode = 'serbest'; // 'serbest' | 'gunluk' | 'bulmaca'
+    let currentMode = 'serbest'; // 'serbest' | 'gunluk' | 'bulmaca' | 'zaman' | 'surpriz' | 'yaris'
+    // ── Yarış modu state ────────────────────────────────────────────
+    const RACE_SIZE = 6;
+    let botGrid = [], botNumber = 1, botLastR = -1, botLastC = -1;
+    let botGameOver = false, playerGameOver = false;
+    let botInterval = null;
+    let raceTimerInterval = null;
+    let raceTimeLeft = 90;
+    let raceDifficulty = 'kolay'; // 'kolay' | 'orta' | 'zor'
+    let isOnlineRace = false;
+    let onlineSocket = null;
+    let onlineOpponentNickname = '';
+    let focusMode = false;
+    // ── Sürpriz mod state ───────────────────────────────────────────
+    let surpriseCells  = [];   // [{r, c, eventType}]
+    let activeEffects  = [];   // [{type, movesLeft}]
+    let blockedCells   = [];   // [{r, c}]
+    let rescueCell     = null; // {r, c} — bomba geri alma butonu
+    let freeJumpActive = false;
+    let distHV   = 3;
+    let distDiag = 2;
+    let hvOnly   = false;
+    let diagOnly = false;
+    let bonusXpActive = false;
+    // Başarı takibi — sürpriz mod
+    let surprizBombTriggered = false;
+    let surprizRescueUsed    = false;
+    let surprizFreeJumpUsed  = false;
     let dailyCompleted = false;
 
     // ── Bulmaca havuzu ───────────────────────────────────────────
@@ -2703,15 +3221,6 @@
       saveCompleted(s);
     }
 
-    // ── Tema ─────────────────────────────────────────────────────
-    function setTheme(t) {
-      document.documentElement.setAttribute('data-theme', t);
-      localStorage.setItem('theme', t);
-      document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.t === t));
-    }
-    document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.t)));
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) setTheme(savedTheme);
 
     // ════════════════════════════════════════════════════════════
     //  XP & SEVİYE
@@ -2821,6 +3330,17 @@
         { id: 'puzzle_no_hint',  icon: '🧠', name: T('ach.puzzle_no_hint.name'),   desc: T('ach.puzzle_no_hint.desc'),  xp: 60,  check: (s) => s.puzzleWonNoHint },
         { id: 'mini_first',      icon: '🔲', name: T('ach.mini_first.name'),       desc: T('ach.mini_first.desc'),      xp: 40,  check: (s) => s.miniSolved >= 1 },
         { id: 'mini_all',        icon: '✨', name: T('ach.mini_all.name'),          desc: T('ach.mini_all.desc'),        xp: 150, check: (s) => s.miniSolved >= 4 },
+        { id: 'surpriz_first',   icon: '🎲', name: T('ach.surpriz_first.name'),    desc: T('ach.surpriz_first.desc'),   xp: 20,  check: (s) => s.surprizScore >= 1 },
+        { id: 'surpriz_bomb',    icon: '💣', name: T('ach.surpriz_bomb.name'),     desc: T('ach.surpriz_bomb.desc'),    xp: 30,  check: (s) => s.surprizBomb },
+        { id: 'surpriz_rescue',  icon: '🔓', name: T('ach.surpriz_rescue.name'),   desc: T('ach.surpriz_rescue.desc'),  xp: 40,  check: (s) => s.surprizRescue },
+        { id: 'surpriz_jump',    icon: '🌀', name: T('ach.surpriz_jump.name'),     desc: T('ach.surpriz_jump.desc'),    xp: 25,  check: (s) => s.surprizFreeJump },
+        { id: 'surpriz_score50', icon: '⭐', name: T('ach.surpriz_score50.name'),  desc: T('ach.surpriz_score50.desc'), xp: 60,  check: (s) => s.surprizScore >= 50 },
+        { id: 'surpriz_score75', icon: '🌟', name: T('ach.surpriz_score75.name'),  desc: T('ach.surpriz_score75.desc'), xp: 100, check: (s) => s.surprizScore >= 75 },
+        { id: 'surpriz_winner',  icon: '👑', name: T('ach.surpriz_winner.name'),   desc: T('ach.surpriz_winner.desc'),  xp: 250, check: (s) => s.surprizWon },
+        { id: 'race_first_win',  icon: '🏁', name: T('ach.race_first_win.name'),   desc: T('ach.race_first_win.desc'),  xp: 50,  check: (s) => s.raceWon },
+        { id: 'race_perfect',    icon: '🌟', name: T('ach.race_perfect.name'),     desc: T('ach.race_perfect.desc'),    xp: 150, check: (s) => s.racePerfect },
+        { id: 'race_hard_win',   icon: '🔥', name: T('ach.race_hard_win.name'),    desc: T('ach.race_hard_win.desc'),   xp: 100, check: (s) => s.raceWon && s.raceDiff === 'zor' },
+        { id: 'race_close',      icon: '💨', name: T('ach.race_close.name'),       desc: T('ach.race_close.desc'),      xp: 60,  check: (s) => s.raceWon && s.raceMargin === 1 },
       ];
     }
 
@@ -2868,6 +3388,8 @@
         { label: T('ach.cat.daily'),   ids: ['daily_done','streak3','streak7'] },
         { label: T('ach.cat.puzzle'),  ids: ['puzzle_first','puzzle_half','puzzle_all','puzzle_no_hint'] },
         { label: T('ach.cat.mini'),    ids: ['mini_first','mini_all'] },
+        { label: T('ach.cat.surpriz'), ids: ['surpriz_first','surpriz_bomb','surpriz_rescue','surpriz_jump','surpriz_score50','surpriz_score75','surpriz_winner'] },
+        { label: T('ach.cat.yaris'),   ids: ['race_first_win','race_perfect','race_hard_win','race_close'] },
       ];
     }
 
@@ -3117,7 +3639,9 @@
     }
 
     function initGame() {
-      activePuzzle = (currentMode === 'bulmaca') ? PUZZLES[currentPuzzleIdx % PUZZLES.length] : null;
+      activePuzzle = (currentMode === 'bulmaca') ? PUZZLES[currentPuzzleIdx % PUZZLES.length]
+                   : (currentMode === 'gunluk')  ? STOP_PUZZLES[getDailySeed() % STOP_PUZZLES.length]
+                   : null;
       activeSize   = activePuzzle?.size || SIZE;
       activeRows   = activeSize;
       activeCols   = activeSize;
@@ -3128,6 +3652,8 @@
       history = [];
       comboCount = 0;
       hintCell = null;
+      showHints = false;
+      if (_hintToastTimer) { clearTimeout(_hintToastTimer); _hintToastTimer = null; document.getElementById('hint-toast').classList.remove('show'); }
       maxComboThisGame = 0;
       noUndoPlaced     = 0;
       hintsUsedThisGame = 0;
@@ -3144,6 +3670,18 @@
       document.getElementById('hint').textContent = T('hint.default');
       updateUndoBtn();
       updateComboDisplay();
+
+      // Yarış UI'ını sıfırla (yaris moduna girilmediyse gizle)
+      if (currentMode !== 'yaris') {
+        if (botInterval) { clearInterval(botInterval); botInterval = null; }
+        if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+        document.getElementById('race-bot-side').style.display = 'none';
+        document.getElementById('race-score-bar').style.display = 'none';
+        document.getElementById('race-player-label').style.display = 'none';
+        document.getElementById('race-undo-bar').style.display = 'none';
+        document.getElementById('grid').style.opacity = '1';
+        gridEl_resetStyle();
+      }
 
       // Mod başlıklarını sıfırla
       document.getElementById('daily-header').classList.remove('show');
@@ -3164,17 +3702,12 @@
         } else {
           puzzleStops = dailyPuzzle.stops.map(s => ({ ...s }));
         }
-        const firstStop = puzzleStops[0];
-        grid[firstStop.r][firstStop.c] = 1;
-        lastR = firstStop.r; lastC = firstStop.c;
-        currentNumber = 2;
-        document.getElementById('num-display').textContent = '2';
         const d = new Date();
         document.getElementById('daily-date').textContent =
           d.toLocaleDateString(currentLang === 'tr' ? 'tr-TR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' });
         document.getElementById('daily-title').textContent = T('daily.title');
         document.getElementById('daily-header').classList.add('show');
-        document.getElementById('hint').textContent = isMini ? T('hint.start.mini') : T('daily.hint', { n: puzzleStops[1]?.n });
+        document.getElementById('hint').textContent = isMini ? T('hint.start.mini') : T('hint.start.puzzle');
       } else if (currentMode === 'bulmaca') {
         const puzzle    = activePuzzle;
         const idx       = currentPuzzleIdx % PUZZLES.length;
@@ -3210,6 +3743,66 @@
         document.getElementById('level-num').textContent   = `${currentTimeLevelIdx + 1}`;
         document.getElementById('level-total').textContent = `${TIME_LEVELS.length}`;
         startTimer(lvl.time);
+      } else if (currentMode === 'surpriz') {
+        puzzleStops = [];
+        distHV = 3; distDiag = 2;
+        hvOnly = diagOnly = freeJumpActive = bonusXpActive = false;
+        activeEffects = []; blockedCells = []; rescueCell = null;
+        surprizBombTriggered = surprizRescueUsed = surprizFreeJumpUsed = false;
+        surpriseCells = generateSurpriseCells(8);
+        clearInterval(timerInterval);
+        document.getElementById('timer-display').style.display = 'none';
+        document.getElementById('level-display').style.display = 'none';
+        updateEffectBar();
+      } else if (currentMode === 'yaris') {
+        puzzleStops = [];
+        distHV = 3; distDiag = 2;
+        hvOnly = diagOnly = freeJumpActive = bonusXpActive = false;
+        activeEffects = []; blockedCells = []; rescueCell = null;
+        updateEffectBar();
+        clearInterval(timerInterval);
+        activeRows = RACE_SIZE; activeCols = RACE_SIZE;
+        grid = Array.from({length: RACE_SIZE}, () => Array(RACE_SIZE).fill(0));
+        botGrid = Array.from({length: RACE_SIZE}, () => Array(RACE_SIZE).fill(0));
+        botNumber = 1; botLastR = -1; botLastC = -1;
+        botGameOver = false; playerGameOver = false;
+        document.getElementById('race-bot-side').style.display = '';
+        document.getElementById('race-score-bar').style.display = '';
+        document.getElementById('race-player-label').style.display = '';
+        document.getElementById('race-undo-bar').style.display = isOnlineRace ? 'none' : '';
+        updateRaceUndoBtn();
+        document.getElementById('bot-grid').style.opacity = '1';
+        document.getElementById('grid').style.opacity = '1';
+        document.getElementById('race-player-score').textContent = '0';
+        document.getElementById('race-bot-score').textContent = '0';
+        if (botInterval) clearInterval(botInterval);
+        if (raceTimerInterval) clearInterval(raceTimerInterval);
+        raceTimeLeft = 90;
+        document.getElementById('race-timer').textContent = '90';
+        document.getElementById('race-timer').parentElement.classList.remove('urgent');
+        if (!isOnlineRace) {
+          const botSpeed = raceDifficulty === 'kolay' ? 1100 : raceDifficulty === 'orta' ? 680 : 270;
+          setTimeout(() => {
+            botInterval = setInterval(botTick, botSpeed);
+            raceTimerInterval = setInterval(() => {
+              raceTimeLeft--;
+              document.getElementById('race-timer').textContent = raceTimeLeft;
+              if (raceTimeLeft <= 10) document.getElementById('race-timer').parentElement.classList.add('urgent');
+              if (raceTimeLeft <= 0) {
+                clearInterval(raceTimerInterval); raceTimerInterval = null;
+                clearInterval(botInterval); botInterval = null;
+                gameActive = false;
+                playerGameOver = true;
+                botGameOver = true;
+                document.getElementById('grid').style.opacity = '0.55';
+                document.getElementById('bot-grid').style.opacity = '0.55';
+                document.getElementById('race-player-score').textContent = currentNumber - 1;
+                checkRaceEnd();
+              }
+            }, 1000);
+          }, 800);
+        }
+        renderBotGrid();
       } else {
         puzzleStops = [];
         document.getElementById('timer-display').style.display = 'none';
@@ -3221,6 +3814,14 @@
       updateRulesText();
       updateHintBtnVisibility();
       renderGrid();
+      if (currentMode === 'yaris') {
+        document.getElementById('race-player-score').textContent = '0';
+      }
+    }
+
+    function gridEl_resetStyle() {
+      const g = document.getElementById('grid');
+      if (g) { g.style.gap = ''; g.style.padding = ''; }
     }
 
     function updateUndoBtn() {
@@ -3236,9 +3837,17 @@
     }
 
     function updateHintBtnVisibility() {
-      document.getElementById('btn-hint-best').style.display  = currentMode === 'zaman' ? 'none' : '';
+      const isYaris = currentMode === 'yaris';
+      document.getElementById('btn-hint-best').style.display  = (currentMode === 'zaman' || currentMode === 'surpriz' || isYaris) ? 'none' : '';
       document.getElementById('btn-time-boost').style.display = currentMode === 'zaman' ? '' : 'none';
-      document.getElementById('btn-scores').style.display     = currentMode === 'serbest' ? '' : 'none';
+      document.getElementById('btn-scores').style.display     = (currentMode === 'serbest' || currentMode === 'surpriz') ? '' : 'none';
+      document.getElementById('btn-hints').style.display      = isYaris ? 'none' : '';
+      document.getElementById('btn-undo').style.display       = isYaris ? 'none' : '';
+      document.getElementById('btn-tutorial').style.display   = isYaris ? 'none' : '';
+      document.getElementById('btn-restart').style.display     = (isYaris && isOnlineRace) ? 'none' : '';
+      document.getElementById('btn-online-leave').style.display = (isYaris && isOnlineRace) ? '' : 'none';
+      document.getElementById('btn-focus').style.display        = currentMode === 'serbest' ? '' : 'none';
+      if (currentMode !== 'serbest' && focusMode) exitFocusMode();
       updateHintBtnLabel();
       updateTimeBoostBtn();
     }
@@ -3328,9 +3937,27 @@
         if (stopForCurrent && !(stopForCurrent.r === r && stopForCurrent.c === c)) return false;
       }
 
+      // Sürpriz mod: bloke hücre
+      if (currentMode === 'surpriz' && blockedCells.some(b => b.r === r && b.c === c)) return false;
+
+      // Sürpriz mod: rescue hamlesi — sadece rescue hücresine izin ver
+      if (currentMode === 'surpriz' && _isRescueMove)
+        return rescueCell && rescueCell.r === r && rescueCell.c === c;
+
       if (currentNumber === 1) return true;
+
+      // Sürpriz mod: serbest atlama aktif → her boş hücre geçerli
+      if (currentMode === 'surpriz' && freeJumpActive) return true;
+
       const dr = Math.abs(r - lastR), dc = Math.abs(c - lastC);
-      return (dr === 0 && dc === 3) || (dc === 0 && dr === 3) || (dr === dc && dr === 2);
+      const isSurpriz = currentMode === 'surpriz';
+      const hv   = isSurpriz ? distHV   : 3;
+      const diag = isSurpriz ? distDiag : 2;
+      const isHV   = (dr === 0 && dc === hv)   || (dc === 0 && dr === hv);
+      const isDiag = (dr === dc && dr === diag);
+      if (isSurpriz && hvOnly)   return isHV;
+      if (isSurpriz && diagOnly) return isDiag;
+      return isHV || isDiag;
     }
 
     function hasAnyValidMove() {
@@ -3340,10 +3967,194 @@
       return false;
     }
 
+    function isNextStopUnreachable() {
+      if (lastR === -1 || lastC === -1) return false;
+      if (!puzzleStops || !puzzleStops.length) return false;
+      const targets = puzzleStops.filter(s => s.n >= currentNumber).sort((a, b) => a.n - b.n);
+      if (!targets.length) return false;
+      const t = targets[0];
+      const avail = t.n - currentNumber + 1;
+      const dr = Math.abs(lastR - t.r), dc = Math.abs(lastC - t.c);
+      return Math.ceil(dr / 3) > avail || Math.ceil(dc / 3) > avail;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  SÜRPRİZ MOD FONKSİYONLARI
+    // ════════════════════════════════════════════════════════════
+    const SURPRISE_TYPES = ['rule_flip','hv_only','diag_only','bonus_xp','blocker','free_jump'];
+    const SURPRISE_WEIGHTS = [20, 15, 15, 20, 15, 15]; // toplam 100
+
+    function generateSurpriseCells(count) {
+      const cells = [];
+      for (let r = 0; r < SIZE; r++)
+        for (let c = 0; c < SIZE; c++)
+          cells.push({ r, c });
+      // Fisher-Yates karıştır
+      for (let i = cells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cells[i], cells[j]] = [cells[j], cells[i]];
+      }
+      return cells.slice(0, count).map(({ r, c }) => ({
+        r, c, eventType: weightedRandom(SURPRISE_TYPES, SURPRISE_WEIGHTS)
+      }));
+    }
+
+    function weightedRandom(items, weights) {
+      const total = weights.reduce((a, b) => a + b, 0);
+      let rnd = Math.random() * total;
+      for (let i = 0; i < items.length; i++) {
+        rnd -= weights[i];
+        if (rnd <= 0) return items[i];
+      }
+      return items[items.length - 1];
+    }
+
+    function triggerEvent(type) {
+      // Aynı türde çakışma önleme
+      activeEffects = activeEffects.filter(e => e.type !== type);
+
+      switch (type) {
+        case 'rule_flip':
+          distHV = 2; distDiag = 3;
+          activeEffects.push({ type: 'rule_flip', movesLeft: 5 });
+          break;
+        case 'hv_only':
+          hvOnly = true; diagOnly = false;
+          activeEffects.push({ type: 'hv_only', movesLeft: 4 });
+          break;
+        case 'diag_only':
+          diagOnly = true; hvOnly = false;
+          activeEffects.push({ type: 'diag_only', movesLeft: 4 });
+          break;
+        case 'bonus_xp':
+          bonusXpActive = true;
+          activeEffects.push({ type: 'bonus_xp', movesLeft: 5 });
+          break;
+        case 'blocker': {
+          surprizBombTriggered = true;
+          checkAchievements({ surprizBomb: true });
+          const empties = [];
+          for (let r = 0; r < SIZE; r++)
+            for (let c = 0; c < SIZE; c++)
+              if (grid[r][c] === 0 && !surpriseCells.some(s => s.r === r && s.c === c)
+                  && !blockedCells.some(b => b.r === r && b.c === c))
+                empties.push({ r, c });
+          for (let i = empties.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [empties[i], empties[j]] = [empties[j], empties[i]];
+          }
+          blockedCells.push(...empties.slice(0, 3));
+          // Rescue butonu: bloke olmayan boş bir hücreye yerleştir
+          const rescueCandidates = [];
+          for (let r = 0; r < SIZE; r++)
+            for (let c = 0; c < SIZE; c++)
+              if (grid[r][c] === 0 && !blockedCells.some(b => b.r === r && b.c === c)
+                  && !surpriseCells.some(s => s.r === r && s.c === c))
+                rescueCandidates.push({ r, c });
+          if (rescueCandidates.length > 0) {
+            const ri = Math.floor(Math.random() * rescueCandidates.length);
+            rescueCell = rescueCandidates[ri];
+          }
+          break;
+        }
+        case 'free_jump':
+          freeJumpActive = true;
+          surprizFreeJumpUsed = true;
+          checkAchievements({ surprizFreeJump: true });
+          break;
+      }
+
+      showSurpriseToast(T('surprise.' + type + '.title') + '\n' + T('surprise.' + type + '.desc'));
+      updateEffectBar();
+      renderGrid();
+    }
+
+    let _isRescueMove = false;
+
+    function activateRescue() {
+      if (!rescueCell) return;
+      const { r, c } = rescueCell;
+      _isRescueMove = true; // isValidMove bypass
+      placeNumber(r, c);
+    }
+
+    function checkSurpriseCell(r, c) {
+      const idx = surpriseCells.findIndex(s => s.r === r && s.c === c);
+      if (idx === -1) return;
+      const { eventType } = surpriseCells[idx];
+      surpriseCells.splice(idx, 1);
+      triggerEvent(eventType);
+    }
+
+    function tickActiveEffects() {
+      const expired = [];
+      activeEffects = activeEffects.filter(e => {
+        e.movesLeft--;
+        if (e.movesLeft <= 0) { expired.push(e.type); return false; }
+        return true;
+      });
+      if (expired.length) {
+        expired.forEach(type => {
+          if (type === 'rule_flip') { distHV = 3; distDiag = 2; }
+          if (type === 'hv_only')   hvOnly   = false;
+          if (type === 'diag_only') diagOnly = false;
+          if (type === 'bonus_xp')  bonusXpActive = false;
+        });
+        showHintToast(T('surprise.expired'));
+        updateEffectBar();
+        renderGrid(); // kural değişikliği yansıtsın
+      } else if (activeEffects.length) {
+        updateEffectBar();
+      }
+    }
+
+    function updateEffectBar() {
+      const bar = document.getElementById('surprise-effect-bar');
+      if (!bar) return;
+      if (currentMode !== 'surpriz' || !activeEffects.length) {
+        bar.classList.remove('active');
+        bar.textContent = '';
+        return;
+      }
+      const ICONS = { rule_flip:'⚡', hv_only:'➡️', diag_only:'↗️', bonus_xp:'⭐', blocker:'💣', free_jump:'🌀' };
+      bar.classList.add('active');
+      bar.textContent = activeEffects.map(e =>
+        `${ICONS[e.type] || ''} ${T('surprise.' + e.type + '.title')} · ${e.movesLeft}${T('surprise.bar.moves')}`
+      ).join('  |  ');
+    }
+
+    let _hintToastTimer = null;
+    let _surpriseToastOpen = false;
+    function showHintToast(msg) {
+      const el  = document.getElementById('hint-toast');
+      const btn = document.getElementById('hint-toast-btn');
+      document.getElementById('hint-toast-msg').textContent = msg;
+      btn.style.display = 'none';
+      el.classList.add('show');
+      if (_hintToastTimer) clearTimeout(_hintToastTimer);
+      _hintToastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+    }
+
+    function showSurpriseToast(msg) {
+      const el  = document.getElementById('hint-toast');
+      const btn = document.getElementById('hint-toast-btn');
+      document.getElementById('hint-toast-msg').textContent = msg;
+      btn.textContent = T('surprise.toast.ok');
+      btn.style.display = '';
+      btn.onclick = () => {
+        el.classList.remove('show');
+        _surpriseToastOpen = false;
+      };
+      if (_hintToastTimer) clearTimeout(_hintToastTimer);
+      _surpriseToastOpen = true;
+      el.classList.add('show');
+    }
+
     // ════════════════════════════════════════════════════════════
     //  SAYI YERLEŞTIRME
     // ════════════════════════════════════════════════════════════
     function placeNumber(r, c) {
+      if (_surpriseToastOpen) return;
       if (!isValidMove(r, c)) {
         if (grid[r][c] === 0) { flashCell(r, c); soundInvalid(); }
         comboCount = 0;
@@ -3352,7 +4163,14 @@
       }
 
       hintCell = null; // hamle yapıldı, ipucunu temizle
-      history.push({ grid: grid.map(row => [...row]), currentNumber, lastR, lastC, comboCount, noUndoPlaced });
+      history.push({
+        grid: grid.map(row => [...row]), currentNumber, lastR, lastC, comboCount, noUndoPlaced,
+        surpriseCells: surpriseCells.map(s => ({...s})),
+        activeEffects:  activeEffects.map(e => ({...e})),
+        blockedCells:   blockedCells.map(b => ({...b})),
+        rescueCell: rescueCell ? {...rescueCell} : null,
+        freeJumpActive, bonusXpActive, distHV, distDiag, hvOnly, diagOnly
+      });
 
       // Hız başarısı takibi
       if (currentNumber === 1) speed10Start = Date.now();
@@ -3362,17 +4180,24 @@
 
       soundPlace(currentNumber);
       grid[r][c] = currentNumber;
+      if (isOnlineRace && onlineSocket?.readyState === WebSocket.OPEN)
+        onlineSocket.send(JSON.stringify({ type: 'move', r, c, n: currentNumber }));
       lastR = r; lastC = c;
       currentNumber++;
+      if (currentMode === 'yaris') document.getElementById('race-player-score').textContent = currentNumber - 1;
       comboCount++;
       noUndoPlaced++;
       if (comboCount > maxComboThisGame) maxComboThisGame = comboCount;
       if (comboCount >= 5) soundCombo();
       updateComboDisplay();
       updateUndoBtn();
+      if (currentMode === 'yaris') updateRaceUndoBtn();
+
+      // Sürpriz mod: serbest atlama tükendi
+      if (currentMode === 'surpriz' && freeJumpActive) { freeJumpActive = false; }
 
       // XP hesapla
-      const xpGain = comboXP();
+      const xpGain = comboXP() * (currentMode === 'surpriz' && bonusXpActive ? 3 : 1);
       const { leveled, newLevel } = addXP(xpGain);
       // Floating XP
       const cells = document.querySelectorAll('.cell');
@@ -3401,6 +4226,24 @@
           : T('hint.next');
       }
 
+      // Rescue hamlesi tamamlandıysa, hasAnyValidMove kontrolünden ÖNCE temizle
+      if (currentMode === 'surpriz' && _isRescueMove) {
+        _isRescueMove = false;
+        blockedCells = [];
+        rescueCell = null;
+        surprizRescueUsed = true;
+        checkAchievements({ surprizRescue: true });
+        showHintToast(T('surprise.rescue.used'));
+        renderGrid();
+      }
+
+      // Sürpriz: efekt tick + olay tetikleme hasAnyValidMove'dan ÖNCE olmalı
+      // (⭐ bonus_xp, ⚡ rule_flip, 🌀 free_jump gibi olaylar yeni hamle açabilir)
+      if (currentMode === 'surpriz') {
+        tickActiveEffects();
+        checkSurpriseCell(r, c);
+      }
+
       document.getElementById('num-display').textContent = currentNumber;
       if (!hasAnyValidMove()) endGame(false);
       else if (currentMode === 'serbest' || currentMode === 'zaman') document.getElementById('hint').textContent = showHints ? T('hint.valid') : T('hint.next');
@@ -3414,20 +4257,30 @@
     function renderGrid() {
       const gridEl = document.getElementById('grid');
       gridEl.style.gridTemplateColumns = `repeat(${activeCols}, 1fr)`;
-      // Küçük grid için hücre boyutunu büyüt
       const maxDim = Math.max(activeRows, activeCols);
-      const cellPx = maxDim <= 5
-        ? `clamp(44px, ${Math.floor(90 / maxDim)}vw, 80px)`
-        : maxDim === 6
-          ? `clamp(36px, 13vw, 62px)`
-          : maxDim <= 8
-            ? `clamp(32px, 9vw, 58px)`
-            : `clamp(30px, 7.5vw, 54px)`;
-      const fontPx = maxDim <= 5
-        ? 'clamp(13px, 3vw, 20px)'
-        : maxDim === 6
-          ? 'clamp(11px, 2.2vw, 16px)'
-          : 'clamp(9px, 1.8vw, 14px)';
+      let cellPx, fontPx;
+      if (currentMode === 'yaris') {
+        const halfW = Math.floor((window.innerWidth - 32 - 8) / 2);
+        const avail = halfW - 4 - 2 * 4 - (activeCols - 1) * 2;
+        const ideal = Math.floor(avail / activeCols);
+        cellPx = `${Math.max(22, Math.min(ideal, 44))}px`;
+        fontPx = 'clamp(7px, 1.4vw, 12px)';
+        gridEl.style.gap = '2px';
+        gridEl.style.padding = '4px';
+      } else {
+        cellPx = maxDim <= 5
+          ? `clamp(44px, ${Math.floor(90 / maxDim)}vw, 80px)`
+          : maxDim === 6
+            ? `clamp(36px, 13vw, 62px)`
+            : maxDim <= 8
+              ? `clamp(32px, 9vw, 58px)`
+              : `clamp(30px, 7.5vw, 54px)`;
+        fontPx = maxDim <= 5
+          ? 'clamp(13px, 3vw, 20px)'
+          : maxDim === 6
+            ? 'clamp(11px, 2.2vw, 16px)'
+            : 'clamp(9px, 1.8vw, 14px)';
+      }
       gridEl.innerHTML = '';
       for (let r = 0; r < activeRows; r++) {
         for (let c = 0; c < activeCols; c++) {
@@ -3438,10 +4291,31 @@
           cell.style.fontSize = fontPx;
           const val = grid[r][c];
 
+          // Sürpriz mod görseli
+          if (currentMode === 'surpriz' && val === 0) {
+            const sc = surpriseCells.find(s => s.r === r && s.c === c);
+            const bl = blockedCells.some(b => b.r === r && b.c === c);
+            const isRescue = rescueCell && rescueCell.r === r && rescueCell.c === c;
+            if (bl) {
+              cell.classList.add('blocked-cell');
+              cell.textContent = '✕';
+            } else if (isRescue) {
+              cell.classList.add('rescue-cell');
+              cell.textContent = '🔓';
+            } else if (sc) {
+              cell.classList.add('surprise-cell');
+              const SURPRISE_ICONS = { rule_flip:'⚡', hv_only:'➡️', diag_only:'↗️', bonus_xp:'⭐', blocker:'💣', free_jump:'🌀' };
+              cell.textContent = SURPRISE_ICONS[sc.eventType] || '?';
+            }
+          }
+
           if (val !== 0) {
             cell.textContent = val;
             cell.classList.add('filled');
-            if (r === lastR && c === lastC) cell.classList.add('last');
+            if (r === lastR && c === lastC) {
+              cell.classList.add('last');
+              if (currentMode === 'gunluk' && currentNumber === 2) cell.classList.add('start-blink');
+            }
           } else if ((currentMode === 'bulmaca' || currentMode === 'gunluk') && puzzleStops.length) {
             const stop = puzzleStops.find(s => s.r === r && s.c === c);
             if (stop) {
@@ -3469,7 +4343,11 @@
             cell.classList.add('hint-best');
           }
 
-          cell.addEventListener('click', () => placeNumber(r, c));
+          if (currentMode === 'surpriz' && rescueCell && rescueCell.r === r && rescueCell.c === c) {
+            cell.addEventListener('click', activateRescue);
+          } else {
+            cell.addEventListener('click', () => placeNumber(r, c));
+          }
           gridEl.appendChild(cell);
         }
       }
@@ -3517,6 +4395,43 @@
       scores.forEach((s, i) => {
         const isCur   = i === rank - 1 && s.score === currentScore;
         const medal   = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
+        html += `<div class="score-row ${isCur ? 'highlight' : ''}">
+          <span class="score-rank">${medal}</span>
+          <span class="score-val">${s.score} / 100</span>
+          <span class="score-date">${s.date}</span>
+        </div>`;
+      });
+      board.innerHTML = html;
+    }
+
+    // ── Sürpriz modu skor tablosu ────────────────────────────────
+    const HS_SURPRIZ_KEY = 'highscores_surpriz';
+
+    function loadSurprizScores() { try { return JSON.parse(localStorage.getItem(HS_SURPRIZ_KEY)) || []; } catch { return []; } }
+
+    function saveSurprizScore(score) {
+      const scores = loadSurprizScores();
+      const date = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+      scores.push({ score, date });
+      scores.sort((a, b) => b.score - a.score);
+      const trimmed = scores.slice(0, HS_MAX);
+      localStorage.setItem(HS_SURPRIZ_KEY, JSON.stringify(trimmed));
+      return trimmed;
+    }
+
+    function renderSurprizScores(scores, currentScore) {
+      const highlight = document.getElementById('overlay-score-highlight');
+      const board     = document.getElementById('overlay-scores');
+      if (!scores.length) { highlight.innerHTML = ''; board.innerHTML = ''; return; }
+      const rank = scores.findIndex(s => s.score === currentScore) + 1;
+      const isRecord = rank === 1 && scores.filter(s => s.score === currentScore).length === 1;
+      if (isRecord && currentScore > 1) highlight.innerHTML = `<span class="new-record">${T('score.record')}</span>`;
+      else if (rank > 0) highlight.innerHTML = T('score.rank', { rank });
+      else highlight.innerHTML = '';
+      let html = `<h4>${T('score.top5.surpriz')}</h4>`;
+      scores.forEach((s, i) => {
+        const isCur = i === rank - 1 && s.score === currentScore;
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}.`;
         html += `<div class="score-row ${isCur ? 'highlight' : ''}">
           <span class="score-rank">${medal}</span>
           <span class="score-val">${s.score} / 100</span>
@@ -3579,6 +4494,21 @@
     // ════════════════════════════════════════════════════════════
     function endGame(won) {
       if (itMode) closeIT();
+      // ── Yarış modu özel akış ─────────────────────────────────────
+      if (currentMode === 'yaris') {
+        gameActive = false;
+        playerGameOver = true;
+        document.getElementById('grid').style.opacity = '0.55';
+        document.getElementById('race-player-score').textContent = currentNumber - 1;
+        if (isOnlineRace) {
+          if (onlineSocket?.readyState === WebSocket.OPEN)
+            onlineSocket.send(JSON.stringify({ type: 'noMoves' }));
+          return; // sunucu result gönderecek
+        }
+        // Bot ve timer devam eder; ikisi de bitince checkRaceEnd tetiklenir
+        checkRaceEnd();
+        return;
+      }
       // ── Zaman modu özel akış ─────────────────────────────────────
       if (currentMode === 'zaman') {
         clearInterval(timerInterval);
@@ -3674,6 +4604,11 @@
         stopSolved,
         miniSolved,
         puzzleWonNoHint: isPuzzleWon && hintsUsedThisGame === 0,
+        surprizScore:    currentMode === 'surpriz' ? score : -1,
+        surprizWon:      currentMode === 'surpriz' && won,
+        surprizBomb:     surprizBombTriggered,
+        surprizRescue:   surprizRescueUsed,
+        surprizFreeJump: surprizFreeJumpUsed,
       });
 
       const box = document.getElementById('overlay-box');
@@ -3694,6 +4629,12 @@
             ? T('lose.mini.msg', { n: currentNumber - 1 })
             : T('lose.puzzle.msg', { n: currentNumber - 1 });
         }
+      } else if (currentMode === 'surpriz') {
+        document.getElementById('overlay-title').textContent = won ? T('win.surpriz') : T('lose.surpriz');
+        document.getElementById('overlay-msg').textContent = won
+          ? T('win.surpriz.msg')
+          : T('lose.classic.msg', { score });
+        document.getElementById('surprise-effect-bar').classList.remove('active');
       } else {
         document.getElementById('overlay-title').textContent = won ? T('win.classic') : T('lose.classic');
         document.getElementById('overlay-msg').textContent = won
@@ -3701,9 +4642,10 @@
           : T('lose.classic.msg', { score });
       }
 
-      if (isMiniGrid || currentMode === 'serbest') {
+      if (isMiniGrid || currentMode === 'serbest' || currentMode === 'bulmaca' || currentMode === 'surpriz') {
         document.getElementById('overlay-score-highlight').innerHTML = '';
         document.getElementById('overlay-scores').innerHTML = '';
+        if (currentMode === 'surpriz') saveSurprizScore(score); // skoru kaydet ama gösterme
       } else {
         renderScores(scores, score);
       }
@@ -3754,6 +4696,16 @@
             'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
             undoMove);
         }
+      } else if (currentMode === 'surpriz') {
+        makeBtn('btn-global-submit-open', T('overlay.btn.submit'),
+          'background:#0c2a1a;color:#4ade80;border:1px solid #22c55e;font-weight:600',
+          () => openGlobalSubmit(score, 'surpriz'));
+        makeBtn('btn-restart-overlay', T('overlay.btn.restart'), null, restartGame);
+        if (!won && history.length > 0) {
+          makeBtn('btn-undo-overlay', T('overlay.btn.undo') + ' 📺',
+            'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
+            () => openAdModal('undo'));
+        }
       } else {
         makeBtn('btn-share-overlay', T('overlay.btn.share'),
           'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
@@ -3762,6 +4714,11 @@
           'background:#0c2a1a;color:#4ade80;border:1px solid #22c55e;font-weight:600',
           () => openGlobalSubmit(score));
         makeBtn('btn-restart-overlay', T('overlay.btn.restart'), null, restartGame);
+        if (!won && history.length > 0) {
+          makeBtn('btn-undo-overlay', T('overlay.btn.undo') + ' 📺',
+            'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
+            () => openAdModal('undo'));
+        }
       }
 
       document.getElementById('overlay').classList.add('show');
@@ -3802,6 +4759,19 @@
       comboCount    = snap.comboCount;
       noUndoPlaced  = snap.noUndoPlaced;
       gameActive    = true;
+      if (currentMode === 'surpriz') {
+        surpriseCells  = snap.surpriseCells  || [];
+        activeEffects  = snap.activeEffects  || [];
+        blockedCells   = snap.blockedCells   || [];
+        rescueCell     = snap.rescueCell     || null;
+        freeJumpActive = snap.freeJumpActive || false;
+        bonusXpActive  = snap.bonusXpActive  || false;
+        distHV   = snap.distHV   ?? 3;
+        distDiag = snap.distDiag ?? 2;
+        hvOnly   = snap.hvOnly   || false;
+        diagOnly = snap.diagOnly || false;
+        updateEffectBar();
+      }
       document.getElementById('overlay').classList.remove('show');
       document.getElementById('num-display').textContent = currentNumber;
       document.getElementById('hint').textContent = showHints ? T('hint.valid') : T('hint.next');
@@ -3917,54 +4887,123 @@
       currentPuzzleIdx = idx;
       localStorage.setItem('puzzleIdx_100oyunu', idx);
       document.getElementById('puzzle-level-select').classList.remove('show');
-      document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'bulmaca'));
+      updateModeUI('bulmaca');
       initGame();
     }
 
     document.getElementById('btn-pls-close').addEventListener('click', () => {
       document.getElementById('puzzle-level-select').classList.remove('show');
-      document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === currentMode));
+      updateModeUI(currentMode);
       if (!gameHasStarted) {
         document.getElementById('start-screen').classList.remove('hidden');
         document.getElementById('start-screen').style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
       }
     });
 
-    document.querySelectorAll('.mode-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Bulmaca sekmesine zaten bulmacadayken basılırsa seviye ekranını aç
-        if (tab.dataset.mode === 'bulmaca' && currentMode === 'bulmaca') {
-          openPuzzleLevelSelect();
-          return;
-        }
-        // Zaman sekmesine zaten zamandayken basılırsa seviye ekranını aç
-        if (tab.dataset.mode === 'zaman' && currentMode === 'zaman') {
-          openTimeLevelSelect();
-          return;
-        }
-        if (tab.dataset.mode === currentMode) return;
-        // Zaman modundan çıkılıyorsa sayacı durdur
-        if (currentMode === 'zaman') {
-          clearInterval(timerInterval);
-        }
-        currentMode = tab.dataset.mode;
-        document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === currentMode));
-        if (currentMode === 'bulmaca') {
-          openPuzzleLevelSelect();
-        } else if (currentMode === 'gunluk') {
-          openPuzzleIntro();
-        } else if (currentMode === 'zaman') {
-          openTimeLevelSelect();
-        } else {
-          initGame();
-        }
+    document.getElementById('btn-rls-close').addEventListener('click', () => {
+      document.getElementById('race-level-select').classList.remove('show');
+      updateModeUI(currentMode);
+      if (!gameHasStarted) {
+        document.getElementById('start-screen').classList.remove('hidden');
+        document.getElementById('start-screen').style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
+      }
+    });
+
+    document.querySelectorAll('.rls-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!btn.dataset.diff) return; // online butonu kendi handler'ına sahip
+        if (!isRaceUnlocked(btn.dataset.diff)) return;
+        raceDifficulty = btn.dataset.diff;
+        isOnlineRace = false;
+        const _botLabel = document.getElementById('race-bot-label');
+        if (_botLabel) _botLabel.textContent = 'BOT';
+        document.querySelectorAll('.rls-btn').forEach(b => b.classList.toggle('active', b.dataset.diff === raceDifficulty));
+        document.getElementById('race-level-select').classList.remove('show');
+        gameHasStarted = true;
+        initGame();
+      });
+    });
+
+    document.getElementById('btn-rls-online').addEventListener('click', () => {
+      document.getElementById('race-level-select').classList.remove('show');
+      const nick = localStorage.getItem('nickname_100oyunu') || '';
+      if (nick) {
+        connectOnlineRace(nick);
+      } else {
+        showOnlineNickSection();
+      }
+    });
+
+    document.getElementById('btn-online-cancel').addEventListener('click', cancelOnlineRace);
+
+    function exitFocusMode() {
+      focusMode = false;
+      document.body.classList.remove('focus-mode');
+    }
+    function toggleFocusMode() {
+      focusMode = !focusMode;
+      document.body.classList.toggle('focus-mode', focusMode);
+    }
+    document.getElementById('btn-focus').addEventListener('click', toggleFocusMode);
+    document.getElementById('btn-focus-exit').addEventListener('click', exitFocusMode);
+
+    document.getElementById('btn-online-leave').addEventListener('click', () => {
+      if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); onlineSocket = null; }
+      isOnlineRace = false;
+      gameHasStarted = false;
+      currentMode = 'serbest';
+      updateModeUI('serbest');
+      document.getElementById('overlay').classList.remove('show');
+      const ss = document.getElementById('start-screen');
+      ss.classList.remove('hidden');
+      ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
+    });
+
+    document.getElementById('btn-online-connect').addEventListener('click', startOnlineFromNickInput);
+    document.getElementById('online-nick-inp').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') startOnlineFromNickInput();
+    });
+
+    function updateModeUI(mode) {
+      const ICONS = { serbest: '🎮', gunluk: '📅', bulmaca: '🧩', zaman: '⏱️', surpriz: '⚡', yaris: '🏁' };
+      const icon  = document.getElementById('mode-select-icon');
+      const label = document.getElementById('mode-select-label');
+      if (icon)  icon.textContent  = ICONS[mode] || '🎮';
+      if (label) label.textContent = T('mode.' + (mode === 'serbest' ? 'klasik' : mode));
+      document.querySelectorAll('.mode-opt').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+    }
+
+    document.getElementById('btn-mode-select').addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.getElementById('mode-dropdown').classList.toggle('open');
+    });
+    document.addEventListener('click', () => document.getElementById('mode-dropdown').classList.remove('open'));
+
+    document.querySelectorAll('.mode-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.getElementById('mode-dropdown').classList.remove('open');
+        if (opt.dataset.mode === 'bulmaca' && currentMode === 'bulmaca') { openPuzzleLevelSelect(); return; }
+        if (opt.dataset.mode === 'zaman' && currentMode === 'zaman') { openTimeLevelSelect(); return; }
+        if (opt.dataset.mode === 'yaris' && currentMode === 'yaris') { openRaceLevelSelect(); return; }
+        if (opt.dataset.mode === currentMode) return;
+        if (currentMode === 'zaman') clearInterval(timerInterval);
+        if (currentMode === 'yaris' && botInterval) { clearInterval(botInterval); botInterval = null; }
+        if (currentMode === 'yaris' && raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+        if (isOnlineRace) { isOnlineRace = false; if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); onlineSocket = null; } }
+        currentMode = opt.dataset.mode;
+        updateModeUI(currentMode);
+        if (currentMode === 'bulmaca') openPuzzleLevelSelect();
+        else if (currentMode === 'gunluk') openPuzzleIntro();
+        else if (currentMode === 'zaman') openTimeLevelSelect();
+        else if (currentMode === 'yaris') openRaceLevelSelect();
+        else initGame();
       });
     });
 
     document.getElementById('btn-pi-close').addEventListener('click', () => {
       gameHasStarted = true;
       document.getElementById('puzzle-intro').classList.remove('show');
-      document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === 'gunluk'));
+      updateModeUI('gunluk');
       initGame();
     });
 
@@ -3976,6 +5015,12 @@
       if (currentMode === 'zaman') {
         clearInterval(timerInterval);
         openTimeLevelSelect();
+        return;
+      }
+      if (currentMode === 'yaris') {
+        if (botInterval) { clearInterval(botInterval); botInterval = null; }
+        if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+        openRaceLevelSelect();
         return;
       }
       initGame();
@@ -4024,6 +5069,450 @@
         if (score < bestScore) { bestScore = score; best = mv; }
       }
       return best;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  YARIŞ MODU — BOT AI
+    // ════════════════════════════════════════════════════════════
+
+    function isBotValidMove(r, c) {
+      if (r < 0 || r >= RACE_SIZE || c < 0 || c >= RACE_SIZE) return false;
+      if (botGrid[r][c] !== 0) return false;
+      if (botNumber === 1) return true;
+      const dr = Math.abs(r - botLastR), dc = Math.abs(c - botLastC);
+      return (dr === 0 && dc === 3) || (dc === 0 && dr === 3) || (dr === dc && dr === 2);
+    }
+
+    function getBotMove() {
+      const valid = [];
+      for (let r = 0; r < RACE_SIZE; r++)
+        for (let c = 0; c < RACE_SIZE; c++)
+          if (isBotValidMove(r, c)) valid.push({r, c});
+      if (!valid.length) return null;
+      if (raceDifficulty === 'kolay')
+        return valid[Math.floor(Math.random() * valid.length)];
+
+      // Sonraki hamleler için skor hesapla
+      const scored = valid.map(({r, c}) => {
+        const tempGrid = botGrid.map(row => [...row]);
+        tempGrid[r][c] = botNumber;
+        let onward = 0;
+        for (let nr = 0; nr < RACE_SIZE; nr++)
+          for (let nc = 0; nc < RACE_SIZE; nc++) {
+            if (tempGrid[nr][nc] !== 0) continue;
+            const dr = Math.abs(nr - r), dc = Math.abs(nc - c);
+            if ((dr === 0 && dc === 3) || (dc === 0 && dr === 3) || (dr === dc && dr === 2)) onward++;
+          }
+        return {r, c, onward};
+      });
+
+      if (raceDifficulty === 'orta') {
+        scored.sort((a, b) => b.onward - a.onward);
+        const topN = Math.min(2, scored.length);
+        return scored[Math.floor(Math.random() * topN)];
+      }
+      // Zor: Warnsdorff — en az çıkışı olan hücreyi seç, %20 ihtimalle top-3'ten rastgele
+      scored.sort((a, b) => a.onward - b.onward);
+      if (Math.random() < 0.20) {
+        const topN = Math.min(3, scored.length);
+        return scored[Math.floor(Math.random() * topN)];
+      }
+      return scored[0];
+    }
+
+    function renderBotGrid() {
+      const el = document.getElementById('bot-grid');
+      if (!el) return;
+      const halfW = Math.floor((window.innerWidth - 32 - 8) / 2);
+      const avail = halfW - 4 - 2 * 4 - (RACE_SIZE - 1) * 2;
+      const ideal = Math.floor(avail / RACE_SIZE);
+      const cPx   = `${Math.max(22, Math.min(ideal, 44))}px`;
+      const fPx   = 'clamp(7px, 1.4vw, 12px)';
+      el.style.gridTemplateColumns = `repeat(${RACE_SIZE}, 1fr)`;
+      el.style.gap = '2px'; el.style.padding = '4px';
+      el.innerHTML = '';
+      for (let r = 0; r < RACE_SIZE; r++) {
+        for (let c = 0; c < RACE_SIZE; c++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          cell.style.width = cPx; cell.style.height = cPx; cell.style.fontSize = fPx;
+          const val = botGrid[r][c];
+          if (val > 0) {
+            cell.textContent = val;
+            cell.style.background = (r === botLastR && c === botLastC)
+              ? 'var(--cell-last)' : 'var(--cell-filled)';
+            cell.style.color = (r === botLastR && c === botLastC)
+              ? 'var(--cell-last-text)' : 'var(--cell-filled-text)';
+          }
+          el.appendChild(cell);
+        }
+      }
+      document.getElementById('race-bot-score').textContent = botNumber - 1;
+    }
+
+    function botTick() {
+      const move = getBotMove();
+      if (!move) {
+        botGameOver = true;
+        clearInterval(botInterval); botInterval = null;
+        document.getElementById('bot-grid').style.opacity = '0.5';
+        if (playerGameOver) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+        checkRaceEnd();
+        return;
+      }
+      botGrid[move.r][move.c] = botNumber;
+      botLastR = move.r; botLastC = move.c;
+      botNumber++;
+      renderBotGrid();
+      document.getElementById('race-bot-score').textContent = botNumber - 1;
+      if (botNumber > RACE_SIZE * RACE_SIZE) {
+        botGameOver = true;
+        clearInterval(botInterval); botInterval = null;
+        if (playerGameOver) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+        checkRaceEnd();
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  ONLINE RACE
+    // ════════════════════════════════════════════════════════════
+    const _RACE_WS = window.location.hostname === 'localhost'
+      ? 'ws://localhost:3001'
+      : 'wss://100oyunu-server-production.up.railway.app';
+
+    function openOnlineWaiting() {
+      document.getElementById('online-waiting-overlay').classList.add('show');
+    }
+    function closeOnlineWaiting() {
+      document.getElementById('online-waiting-overlay').classList.remove('show');
+    }
+
+    function cancelOnlineRace() {
+      if (onlineSocket) {
+        onlineSocket.onclose = null;
+        onlineSocket.close();
+        onlineSocket = null;
+      }
+      isOnlineRace = false;
+      closeOnlineWaiting();
+    }
+
+    function connectOnlineRace(nickname) {
+      isOnlineRace = true;
+      const titleEl = document.getElementById('online-waiting-title');
+      const subEl   = document.getElementById('online-waiting-sub');
+      const nickSec = document.getElementById('online-nick-section');
+      titleEl.textContent = T('online.waiting.title');
+      subEl.textContent   = T('online.waiting.sub');
+      nickSec.style.display = 'none';
+      document.getElementById('online-waiting-anim').textContent = '🌐';
+      openOnlineWaiting();
+
+      try {
+        onlineSocket = new WebSocket(_RACE_WS);
+      } catch(e) {
+        closeOnlineWaiting();
+        isOnlineRace = false;
+        showToast({ icon: '❌', name: T('online.error'), xp: 0 });
+        return;
+      }
+
+      onlineSocket.onopen = () => {
+        onlineSocket.send(JSON.stringify({ type: 'join', nickname }));
+      };
+      onlineSocket.onmessage = (evt) => {
+        try { handleOnlineMessage(JSON.parse(evt.data)); } catch {}
+      };
+      onlineSocket.onerror = () => {
+        closeOnlineWaiting();
+        isOnlineRace = false;
+        onlineSocket = null;
+        showToast({ icon: '❌', name: T('online.error'), xp: 0 });
+      };
+      onlineSocket.onclose = () => {
+        // gameActive kontrolü yok — oyuncu hamlesiz kalmışsa da overlay göster
+        if (isOnlineRace) {
+          gameActive = false;
+          playerGameOver = true;
+          botGameOver = true;
+          hideOnlineWaiting();
+          if (!document.getElementById('overlay').classList.contains('show'))
+            showOnlineResult(currentNumber - 1, 0, 'you', true);
+        }
+      };
+    }
+
+    function handleOnlineMessage(data) {
+      switch (data.type) {
+        case 'waiting':
+          break;
+
+        case 'matched':
+          isOnlineRace = true;
+          onlineOpponentNickname = data.opponentNickname;
+          document.getElementById('online-waiting-title').textContent = T('online.matched.title');
+          document.getElementById('online-waiting-sub').textContent = data.opponentNickname + T('online.matched.sub');
+          document.getElementById('online-waiting-anim').textContent = '🎯';
+          break;
+
+        case 'start': {
+          closeOnlineWaiting();
+          document.getElementById('overlay').classList.remove('show');
+          document.getElementById('race-level-select').classList.remove('show');
+          currentMode = 'yaris';
+          gameHasStarted = true;
+          const _bl = document.getElementById('race-bot-label');
+          if (_bl) _bl.textContent = onlineOpponentNickname || 'OPPONENT';
+          updateModeUI('yaris');
+          initGame();
+          break;
+        }
+
+        case 'tick':
+          raceTimeLeft = data.timeLeft;
+          document.getElementById('race-timer').textContent = data.timeLeft;
+          if (data.timeLeft <= 10)
+            document.getElementById('race-timer').parentElement.classList.add('urgent');
+          break;
+
+        case 'opponentMove':
+          if (!isOnlineRace) break;
+          botGrid[data.r][data.c] = data.n;
+          botLastR = data.r; botLastC = data.c;
+          botNumber = data.score + 1;
+          renderBotGrid();
+          document.getElementById('race-bot-score').textContent = data.score;
+          break;
+
+        case 'opponentNoMoves':
+          if (!isOnlineRace) break;
+          botGameOver = true;
+          document.getElementById('bot-grid').style.opacity = '0.55';
+          break;
+
+        case 'result':
+          if (!isOnlineRace) break;
+          gameActive = false;
+          playerGameOver = true;
+          botGameOver = true;
+          if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+          document.getElementById('grid').style.opacity     = '0.55';
+          document.getElementById('bot-grid').style.opacity = '0.55';
+          document.getElementById('race-player-score').textContent = data.yourScore;
+          document.getElementById('race-bot-score').textContent    = data.opponentScore;
+          showOnlineResult(data.yourScore, data.opponentScore, data.winner, false);
+          break;
+
+        case 'rematchRequest': {
+          const rb = document.getElementById('btn-overlay-rematch');
+          if (rb && !rb.disabled) {
+            rb.textContent = T('online.rematch.opp');
+            rb.style.borderColor = '#22c55e';
+            rb.style.color = '#4ade80';
+          }
+          break;
+        }
+
+        case 'opponentLeft':
+          if (!isOnlineRace) break;
+          gameActive = false;
+          playerGameOver = true;
+          botGameOver = true;
+          if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+          showOnlineResult(currentNumber - 1, 0, 'you', true);
+          break;
+      }
+    }
+
+    function showOnlineResult(myScore, oppScore, winner, disconnected) {
+      const won  = winner === 'you';
+      const draw = winner === 'draw';
+      if (won)       { soundWin(); launchConfetti(); }
+      else if (draw) { soundWin(); }
+      else             soundLose();
+
+      const box = document.getElementById('overlay-box');
+      box.className = (won || draw) ? 'win' : 'lose';
+
+      let title = draw ? T('online.draw') : (won ? T('online.win') : T('online.lose'));
+      if (disconnected) title = T('online.disconnected');
+      document.getElementById('overlay-title').textContent = title;
+      document.getElementById('overlay-msg').textContent   = T('online.result.msg', { a: myScore, nick: onlineOpponentNickname, b: oppScore });
+      document.getElementById('overlay-xp-gain').textContent = '';
+      document.getElementById('overlay-score-highlight').innerHTML = '';
+      document.getElementById('overlay-scores').innerHTML = '';
+
+      const btns = document.getElementById('overlay-btns');
+      btns.innerHTML = '';
+
+      const closeSocket = () => {
+        if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); onlineSocket = null; }
+        isOnlineRace = false;
+      };
+
+      // Rematch butonu (rakip ayrıldıysa gizle)
+      if (!disconnected) {
+        const rematchBtn = document.createElement('button');
+        rematchBtn.id = 'btn-overlay-rematch';
+        rematchBtn.textContent = T('online.rematch');
+        rematchBtn.addEventListener('click', () => {
+          rematchBtn.textContent = T('online.rematch.waiting');
+          rematchBtn.disabled = true;
+          if (onlineSocket?.readyState === WebSocket.OPEN)
+            onlineSocket.send(JSON.stringify({ type: 'rematch' }));
+        });
+        btns.appendChild(rematchBtn);
+      }
+
+      // Yeni rakip bul
+      const newBtn = document.createElement('button');
+      newBtn.textContent = T('online.new.game');
+      newBtn.addEventListener('click', () => {
+        document.getElementById('overlay').classList.remove('show');
+        closeSocket();
+        const nick = localStorage.getItem('nickname_100oyunu') || '';
+        if (nick) connectOnlineRace(nick);
+        else showOnlineNickSection();
+      });
+      btns.appendChild(newBtn);
+
+      const mkBtn = (key, onClick) => {
+        const b = document.createElement('button');
+        b.textContent = T(key);
+        b.addEventListener('click', onClick);
+        btns.appendChild(b);
+      };
+      mkBtn('online.change.mode', () => {
+        document.getElementById('overlay').classList.remove('show');
+        closeSocket();
+        openRaceLevelSelect();
+      });
+      mkBtn('online.home', () => {
+        document.getElementById('overlay').classList.remove('show');
+        closeSocket();
+        gameHasStarted = false;
+        currentMode = 'serbest';
+        updateModeUI('serbest');
+        const ss = document.getElementById('start-screen');
+        ss.classList.remove('hidden');
+        ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
+      });
+
+      document.getElementById('overlay').classList.add('show');
+      isOnlineRace = false;
+      // Socket AÇIK kalıyor — rematch için
+    }
+
+    function showOnlineNickSection() {
+      const titleEl = document.getElementById('online-waiting-title');
+      const subEl   = document.getElementById('online-waiting-sub');
+      const nickSec = document.getElementById('online-nick-section');
+      const inp     = document.getElementById('online-nick-inp');
+      titleEl.textContent   = T('online.nick.label');
+      subEl.textContent     = T('online.nick.sub');
+      inp.placeholder       = T('modal.submit.ph');
+      document.getElementById('btn-online-connect').textContent = T('online.connect.btn');
+      document.getElementById('online-waiting-anim').textContent = '🌐';
+      nickSec.style.display = 'flex';
+      openOnlineWaiting();
+      inp.focus();
+    }
+
+    function startOnlineFromNickInput() {
+      const inp  = document.getElementById('online-nick-inp');
+      const nick = inp.value.trim();
+      if (!nick) { inp.focus(); return; }
+      localStorage.setItem('nickname_100oyunu', nick);
+      document.getElementById('online-nick-section').style.display = 'none';
+      connectOnlineRace(nick);
+    }
+
+    function checkRaceEnd() {
+      if (isOnlineRace) return;
+      if (!playerGameOver || !botGameOver) return;
+      if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+      if (botInterval) { clearInterval(botInterval); botInterval = null; }
+      const pScore = currentNumber - 1;
+      const bScore = botNumber - 1;
+      const won    = pScore > bScore;
+      const draw   = pScore === bScore;
+      if (won) { soundWin(); launchConfetti(); }
+      else if (draw) { soundWin(); }
+      else { soundLose(); }
+      const box = document.getElementById('overlay-box');
+      box.className = won ? 'win' : (draw ? 'win' : 'lose');
+      document.getElementById('overlay-title').textContent = draw ? '🤝 Berabere Bitti!' : (won ? '🏆 Kazandın!' : '🤖 Bot Kazandı!');
+      document.getElementById('overlay-msg').textContent   = `Sen: ${pScore} — Bot: ${bScore}`;
+      document.getElementById('overlay-xp-gain').textContent = '';
+      document.getElementById('overlay-score-highlight').innerHTML = '';
+      document.getElementById('overlay-scores').innerHTML = '';
+      const btns = document.getElementById('overlay-btns'); btns.innerHTML = '';
+      const mkBtn = (label, onClick) => {
+        const b = document.createElement('button');
+        b.innerHTML = label;
+        b.addEventListener('click', onClick);
+        btns.appendChild(b);
+      };
+      if (won) {
+        const beaten = loadRaceBeaten();
+        beaten[raceDifficulty] = true;
+        saveRaceBeaten(beaten);
+      }
+      checkAchievements({
+        mode: 'yaris',
+        raceWon: won,
+        racePerfect: pScore === RACE_SIZE * RACE_SIZE,
+        raceDiff: raceDifficulty,
+        raceMargin: Math.abs(pScore - bScore),
+      });
+      mkBtn('🔄 Tekrar', () => { document.getElementById('overlay').classList.remove('show'); initGame(); });
+      mkBtn('⚙️ Zorluk Seç', () => { document.getElementById('overlay').classList.remove('show'); openRaceLevelSelect(); });
+      mkBtn('🏠 Modlar', () => { document.getElementById('overlay').classList.remove('show'); currentMode = 'serbest'; updateModeUI('serbest'); initGame(); });
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function loadRaceBeaten() {
+      try { return JSON.parse(localStorage.getItem('race_beaten_100oyunu')) || {}; } catch { return {}; }
+    }
+    function saveRaceBeaten(data) { localStorage.setItem('race_beaten_100oyunu', JSON.stringify(data)); }
+
+    function isRaceUnlocked(diff) {
+      if (diff === 'kolay') return true;
+      const b = loadRaceBeaten();
+      if (diff === 'orta') return !!b.kolay;
+      if (diff === 'zor')  return !!b.orta;
+      return false;
+    }
+
+    function updateRaceUndoBtn() {
+      const btn = document.getElementById('btn-race-undo');
+      if (!btn) return;
+      btn.disabled = !history.length || playerGameOver;
+    }
+
+    document.getElementById('btn-race-undo').addEventListener('click', () => {
+      if (!history.length || playerGameOver) return;
+      openAdModal('race_undo');
+    });
+
+    function openRaceLevelSelect() {
+      const LOCK_LABELS = { tr: 'Kolayı yenince açılır', en: 'Beat Easy to unlock' };
+      const MID_LABELS  = { tr: 'Ortayı yenince açılır', en: 'Beat Medium to unlock' };
+      document.querySelectorAll('.rls-btn').forEach(b => {
+        const diff = b.dataset.diff;
+        if (!diff) return; // online butonu gibi diff olmayan butonları atla
+        const unlocked = isRaceUnlocked(diff);
+        b.classList.toggle('active', diff === raceDifficulty && unlocked);
+        b.classList.toggle('locked', !unlocked);
+        const lockMsg = diff === 'orta'
+          ? (currentLang === 'tr' ? LOCK_LABELS.tr : LOCK_LABELS.en)
+          : diff === 'zor'
+          ? (currentLang === 'tr' ? MID_LABELS.tr : MID_LABELS.en)
+          : '';
+        const base = b.getAttribute('data-i18n') ? T(b.getAttribute('data-i18n')) : b.textContent.split(' — ')[0];
+        b.textContent = unlocked ? base : `🔒 ${base} — ${lockMsg}`;
+      });
+      document.getElementById('race-level-select').classList.add('show');
     }
 
     // ── Zorunlu Duraklar için gerçek çözüm bulucu ────────────────
@@ -4222,6 +5711,7 @@
 
         hintCell = best;
         if (undoneCount > 0) {
+          showHintToast(T('hint.unreachable', { n: undoneCount }));
           document.getElementById('hint').textContent = undoneCount + T('hint.undo.prefix');
           document.getElementById('num-display').textContent = currentNumber;
           updateUndoBtn();
@@ -4234,22 +5724,29 @@
       }
 
       // ── Zorunlu Duraklar ────────────────────────────────────────
-      // Geçerli hamle yoksa geçmişten geri al
+      // Mevcut konumda çözüm ara; yoksa önceki doğru hamleye kadar geri al
       let undoneCount = 0;
-      while (!hasAnyValidMove() && history.length > 0) {
-        const snap = history.pop();
-        grid          = snap.grid;
-        currentNumber = snap.currentNumber;
-        lastR         = snap.lastR;
-        lastC         = snap.lastC;
-        comboCount    = snap.comboCount;
-        noUndoPlaced  = snap.noUndoPlaced;
-        gameActive    = true;
-        undoneCount++;
+      let best = solveZorunluDuraklar();
+
+      if (!best && history.length > 0) {
+        while (history.length > 0) {
+          const snap = history.pop();
+          grid          = snap.grid;
+          currentNumber = snap.currentNumber;
+          lastR         = snap.lastR;
+          lastC         = snap.lastC;
+          comboCount    = snap.comboCount;
+          noUndoPlaced  = snap.noUndoPlaced;
+          gameActive    = true;
+          undoneCount++;
+          // Mesafe kontrolü geçerse tam çözücüyü çalıştır
+          if (!isNextStopUnreachable()) {
+            best = solveZorunluDuraklar();
+            if (best) break;
+          }
+        }
       }
 
-      // Gerçek çözücüyü çalıştır
-      const best = solveZorunluDuraklar();
       if (!best) {
         hintsUsedThisGame--; updateHintBtnLabel();
         document.getElementById('hint').textContent = T('hint.notfound');
@@ -4258,6 +5755,7 @@
 
       hintCell = best;
       if (undoneCount > 0) {
+        showHintToast(T('hint.unreachable', { n: undoneCount }));
         document.getElementById('hint').textContent = undoneCount + T('hint.undo.prefix');
         document.getElementById('num-display').textContent = currentNumber;
         updateUndoBtn();
@@ -4307,7 +5805,7 @@
       document.getElementById('scores-modal').classList.add('show');
     }
 
-    document.getElementById('btn-scores').addEventListener('click', openGlobalScoresModal);
+    document.getElementById('btn-scores').addEventListener('click', () => openGlobalScoresModal(currentMode === 'surpriz' ? 'surpriz' : 'serbest'));
     document.getElementById('btn-scores-close').addEventListener('click', () => document.getElementById('scores-modal').classList.remove('show'));
     document.getElementById('btn-scores-clear').addEventListener('click', () => {
       if (confirm(T('confirm.clear.scores'))) { localStorage.removeItem(HS_KEY); openScoresModal(); }
@@ -4316,18 +5814,30 @@
       if (e.target === document.getElementById('scores-modal')) document.getElementById('scores-modal').classList.remove('show');
     });
 
+    document.getElementById('overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('overlay'))
+        document.getElementById('overlay').classList.remove('show');
+    });
+
     // ════════════════════════════════════════════════════════════
     //  GLOBAL SKOR
     // ════════════════════════════════════════════════════════════
 
     const NICK_KEY = 'nickname_100oyunu';
 
-    function openGlobalSubmit(score) {
+    let _globalSubmitMode = 'serbest';
+
+    function openGlobalSubmit(score, mode = 'serbest') {
+      _globalSubmitMode = mode;
+      const isSurpriz = mode === 'surpriz';
+      document.getElementById('global-submit-title').textContent =
+        isSurpriz ? T('modal.submit.title.surpriz') : T('modal.submit.title');
       document.getElementById('global-submit-score').textContent = T('modal.submit.score', { score });
       document.getElementById('global-nickname-input').value = localStorage.getItem(NICK_KEY) || '';
       document.getElementById('global-submit-msg').textContent = '';
       document.getElementById('global-submit-msg').className = 'global-submit-msg';
       document.getElementById('btn-global-send').disabled = false;
+      document.getElementById('btn-global-send').textContent = T('modal.submit.send');
       document.getElementById('global-submit-modal').classList.add('show');
       document.getElementById('global-nickname-input').focus();
     }
@@ -4335,8 +5845,10 @@
     async function submitGlobalScore() {
       const nickname = document.getElementById('global-nickname-input').value.trim();
       const scoreText = document.getElementById('global-submit-score').textContent;
-      const score = parseInt(scoreText.match(/\d+/)[0]);
+      const _sm = scoreText.match(/\d+/);
       const msgEl = document.getElementById('global-submit-msg');
+      if (!_sm) { msgEl.textContent = T('nickname.required'); return; }
+      const score = parseInt(_sm[0]);
 
       if (!nickname) {
         msgEl.textContent = T('nickname.required');
@@ -4352,7 +5864,7 @@
         const res  = await fetch(`${GLOBAL_API}/api/scores`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nickname, score })
+          body: JSON.stringify({ nickname, score, mode: _globalSubmitMode })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Hata');
@@ -4363,7 +5875,7 @@
         document.getElementById('btn-global-send').textContent = T('global.sent');
         setTimeout(() => {
           document.getElementById('global-submit-modal').classList.remove('show');
-          openGlobalScoresModal();
+          openGlobalScoresModal(_globalSubmitMode);
         }, 1500);
       } catch (err) {
         msgEl.textContent = err.message === 'Failed to fetch'
@@ -4373,10 +5885,13 @@
       }
     }
 
-    async function openGlobalScoresModal() {
+    async function openGlobalScoresModal(mode = 'serbest') {
       const modal  = document.getElementById('global-scores-modal');
       const list   = document.getElementById('global-scores-list');
       const status = document.getElementById('global-scores-status');
+      const isSurpriz = mode === 'surpriz';
+      document.getElementById('global-scores-title').textContent =
+        isSurpriz ? T('modal.global.title.surpriz') : T('modal.global.title');
       list.innerHTML = '';
       status.textContent = T('global.loading');
       modal.classList.add('show');
@@ -4384,7 +5899,7 @@
       const myNick = localStorage.getItem(NICK_KEY) || '';
 
       try {
-        const res  = await fetch(`${GLOBAL_API}/api/scores?limit=20`);
+        const res  = await fetch(`${GLOBAL_API}/api/scores?limit=20&mode=${mode}`);
         const rows = await res.json();
 
         if (!rows.length) { status.textContent = T('global.empty'); return; }
@@ -4605,21 +6120,29 @@
         ss.classList.remove('hidden');
         ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
         if (currentMode === 'zaman') clearInterval(timerInterval);
+        if (currentMode === 'yaris' && botInterval) { clearInterval(botInterval); botInterval = null; }
+        if (currentMode === 'yaris' && raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
       }
 
       function launchMode(mode) {
+        if (itMode) closeIT();
         ss.style.animation = 'ssOut 0.25s ease forwards';
         setTimeout(() => {
           ss.classList.add('hidden');
           currentMode = mode;
-          document.querySelectorAll('.mode-tab').forEach(t =>
-            t.classList.toggle('active', t.dataset.mode === mode));
+          updateModeUI(mode);
           if (mode === 'bulmaca') {
             openPuzzleLevelSelect();
           } else if (mode === 'gunluk') {
             openPuzzleIntro();
           } else if (mode === 'zaman') {
             openTimeLevelSelect();
+          } else if (mode === 'surpriz') {
+            gameHasStarted = true;
+            initGame();
+          } else if (mode === 'yaris') {
+            gameHasStarted = true;
+            openRaceLevelSelect();
           } else {
             gameHasStarted = true;
             if (!localStorage.getItem('itSeen')) {
@@ -4644,6 +6167,10 @@
     updateXPBar(loadXP().total, false);
     applyLang();
 
+    window.addEventListener('beforeunload', () => {
+      if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); }
+    });
+
     // ════════════════════════════════════════════════════════════
     //  AD MODAL — simüle reklam (gerçek AdMob için showRealAd'ı doldur)
     // ════════════════════════════════════════════════════════════
@@ -4656,9 +6183,14 @@
         clearInterval(timerInterval);
         timerInterval = null;
       }
+      if (target === 'race_undo') {
+        if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
+        if (botInterval)       { clearInterval(botInterval);       botInterval = null; }
+      }
       document.getElementById('ad-modal-desc').textContent =
-        target === 'time' ? T('modal.ad.time.desc') :
-        target === 'undo' ? T('modal.ad.undo.desc') : T('modal.ad.hint.desc');
+        target === 'time'      ? T('modal.ad.time.desc') :
+        target === 'undo'      ? T('modal.ad.undo.desc') :
+        target === 'race_undo' ? T('modal.ad.undo.desc') : T('modal.ad.hint.desc');
       document.getElementById('ad-watch-area').style.display = 'none';
       document.getElementById('ad-modal-btns').style.display = '';
       document.getElementById('ad-modal').classList.add('show');
@@ -4672,6 +6204,26 @@
           updateTimerDisplay();
           if (timeLeft <= 0) { clearInterval(timerInterval); endGame(false); }
         }, 1000);
+      }
+      if (adRewardTarget === 'race_undo' && currentMode === 'yaris' && !playerGameOver) {
+        if (!raceTimerInterval) {
+          raceTimerInterval = setInterval(() => {
+            raceTimeLeft--;
+            document.getElementById('race-timer').textContent = raceTimeLeft;
+            if (raceTimeLeft <= 0) {
+              clearInterval(raceTimerInterval); raceTimerInterval = null;
+              gameActive = false; playerGameOver = true;
+              document.getElementById('grid').style.opacity = '0.55';
+              document.getElementById('race-player-score').textContent = currentNumber - 1;
+              if (!botGameOver) botGameOver = true;
+              checkRaceEnd();
+            }
+          }, 1000);
+        }
+        if (!botGameOver && !botInterval) {
+          const botSpeed = raceDifficulty === 'kolay' ? 1100 : raceDifficulty === 'orta' ? 680 : 270;
+          botInterval = setInterval(botTick, botSpeed);
+        }
       }
     }
 
@@ -4709,9 +6261,29 @@
         updateTimerDisplay();
         updateTimeBoostBtn();
       } else if (adRewardTarget === 'undo') {
+        document.getElementById('overlay').classList.remove('show');
         undosUsedThisGame = Math.max(0, undosUsedThisGame - 1);
         updateUndoBtn();
         undoMove();
+      } else if (adRewardTarget === 'race_undo') {
+        if (history.length) {
+          const snap    = history.pop();
+          grid          = snap.grid;
+          currentNumber = snap.currentNumber;
+          lastR         = snap.lastR;
+          lastC         = snap.lastC;
+          comboCount    = snap.comboCount;
+          noUndoPlaced  = snap.noUndoPlaced;
+          gameActive    = true;
+          playerGameOver = false;
+          document.getElementById('grid').style.opacity = '1';
+          document.getElementById('num-display').textContent = currentNumber;
+          document.getElementById('race-player-score').textContent = currentNumber - 1;
+          document.getElementById('hint').textContent = T('hint.next');
+          updateComboDisplay();
+          renderGrid();
+          updateRaceUndoBtn();
+        }
       } else {
         hintsUsedThisGame = Math.max(0, hintsUsedThisGame - 1);
         updateHintBtnLabel();
