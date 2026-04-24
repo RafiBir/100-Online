@@ -5387,12 +5387,7 @@
 
     document.getElementById('btn-rls-online').addEventListener('click', () => {
       document.getElementById('race-level-select').classList.remove('show');
-      const nick = localStorage.getItem('nickname_100oyunu') || '';
-      if (nick) {
-        connectOnlineRace(nick);
-      } else {
-        showOnlineNickSection();
-      }
+      showOnlineNickSection();
     });
 
     document.getElementById('btn-online-cancel').addEventListener('click', cancelOnlineRace);
@@ -5897,8 +5892,7 @@
         document.getElementById('overlay').classList.remove('show');
         closeSocket();
         const nick = localStorage.getItem('nickname_100oyunu') || '';
-        if (nick) connectOnlineRace(nick);
-        else showOnlineNickSection();
+        showOnlineNickSection();
       });
       btns.appendChild(newBtn);
 
@@ -5937,11 +5931,12 @@
       titleEl.textContent   = T('online.nick.label');
       subEl.textContent     = T('online.nick.sub');
       inp.placeholder       = T('modal.submit.ph');
-      document.getElementById('btn-online-connect').textContent = T('online.connect.btn');
+      inp.value             = localStorage.getItem('nickname_100oyunu') || '';
       document.getElementById('online-waiting-anim').textContent = '🌐';
       nickSec.style.display = 'flex';
+      switchOnlineTab('quick');
       openOnlineWaiting();
-      inp.focus();
+      if (!inp.value) inp.focus();
     }
 
     function startOnlineFromNickInput() {
