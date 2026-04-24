@@ -1983,6 +1983,7 @@
   <div id="race-boards">
     <div class="race-side" id="race-player-side">
       <div class="race-label" id="race-player-label" style="display:none" data-i18n="race.player.you">SEN</div>
+      <div id="race-player-rank" style="display:none;font-size:0.72rem;font-weight:600;color:var(--accent);margin-bottom:2px;text-align:center"></div>
       <div id="grid"></div>
     </div>
     <div class="race-side" id="race-bot-side" style="display:none">
@@ -3803,6 +3804,14 @@
         document.getElementById('race-bot-side').style.display = '';
         document.getElementById('race-score-bar').style.display = '';
         document.getElementById('race-player-label').style.display = '';
+        if (!isOnlineRace) {
+          const _pl2 = document.getElementById('race-player-label');
+          if (_pl2) { _pl2.setAttribute('data-i18n', 'race.player.you'); _pl2.textContent = T('race.player.you'); }
+          const _pr2 = document.getElementById('race-player-rank');
+          if (_pr2) _pr2.style.display = 'none';
+          const _br2 = document.getElementById('race-bot-rank');
+          if (_br2) _br2.style.display = 'none';
+        }
         document.getElementById('race-undo-bar').style.display = isOnlineRace ? 'none' : '';
         updateRaceUndoBtn();
         document.getElementById('bot-grid').style.opacity = '1';
@@ -5357,6 +5366,7 @@
           document.getElementById('race-level-select').classList.remove('show');
           currentMode = 'yaris';
           gameHasStarted = true;
+          // Rakip isim + rütbe
           const _bl = document.getElementById('race-bot-label');
           if (_bl) _bl.textContent = onlineOpponentNickname || 'OPPONENT';
           const _br = document.getElementById('race-bot-rank');
@@ -5366,6 +5376,23 @@
               _br.style.display = '';
             } else {
               _br.style.display = 'none';
+            }
+          }
+          // Kendi isim + rütbe
+          const _pl = document.getElementById('race-player-label');
+          if (_pl) {
+            const myNick = localStorage.getItem('nickname_100oyunu') || 'SEN';
+            _pl.textContent = myNick;
+            _pl.removeAttribute('data-i18n');
+          }
+          const _pr = document.getElementById('race-player-rank');
+          if (_pr) {
+            const myRankInfo = getClassicRankInfo();
+            if (myRankInfo) {
+              _pr.textContent = `${myRankInfo.tier.icon} ${myRankInfo.tier.name}`;
+              _pr.style.display = '';
+            } else {
+              _pr.style.display = 'none';
             }
           }
           updateModeUI('yaris');
