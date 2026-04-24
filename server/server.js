@@ -22,43 +22,49 @@ function escapeHtml(str) {
 }
 
 // GET /api/scores?limit=20&mode=serbest
-app.get('/api/scores', (req, res) => {
-  const limit = Math.min(parseInt(req.query.limit) || 20, 100);
-  const mode  = VALID_MODES.includes(req.query.mode) ? req.query.mode : 'serbest';
-  res.json(getTopScores(limit, mode));
+app.get('/api/scores', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const mode  = VALID_MODES.includes(req.query.mode) ? req.query.mode : 'serbest';
+    res.json(await getTopScores(limit, mode));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // POST /api/scores  { nickname, score, mode }
-app.post('/api/scores', (req, res) => {
-  let { nickname, score, mode } = req.body;
+app.post('/api/scores', async (req, res) => {
+  try {
+    let { nickname, score, mode } = req.body;
 
-  if (typeof nickname !== 'string' || nickname.trim().length === 0) {
-    return res.status(400).json({ error: 'Geçerli bir nickname gir.' });
-  }
-  nickname = escapeHtml(nickname.trim()).slice(0, 20);
+    if (typeof nickname !== 'string' || nickname.trim().length === 0) {
+      return res.status(400).json({ error: 'Geçerli bir nickname gir.' });
+    }
+    nickname = escapeHtml(nickname.trim()).slice(0, 20);
 
-  score = parseInt(score);
-  if (isNaN(score) || score < 1 || score > 100) {
-    return res.status(400).json({ error: 'Skor 1-100 arasında olmalı.' });
-  }
+    score = parseInt(score);
+    if (isNaN(score) || score < 1 || score > 100) {
+      return res.status(400).json({ error: 'Skor 1-100 arasında olmalı.' });
+    }
 
-  if (!VALID_MODES.includes(mode)) mode = 'serbest';
+    if (!VALID_MODES.includes(mode)) mode = 'serbest';
 
-  const date = new Date().toLocaleDateString('tr-TR', {
-    day: '2-digit', month: '2-digit', year: '2-digit'
-  });
+    const date = new Date().toLocaleDateString('tr-TR', {
+      day: '2-digit', month: '2-digit', year: '2-digit'
+    });
 
-  insertScore(nickname, score, date, mode);
-  const { rank, total } = getRank(score, mode);
-  res.json({ rank, total });
+    await insertScore(nickname, score, date, mode);
+    const { rank, total } = await getRank(score, mode);
+    res.json({ rank, total });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // DELETE /api/scores?key=ADMIN_KEY&mode=serbest
-app.delete('/api/scores', (req, res) => {
-  if (req.query.key !== ADMIN_KEY) return res.status(403).json({ error: 'Yetkisiz.' });
-  const mode = VALID_MODES.includes(req.query.mode) ? req.query.mode : null;
-  clearScores(mode);
-  res.json({ ok: true });
+app.delete('/api/scores', async (req, res) => {
+  try {
+    if (req.query.key !== ADMIN_KEY) return res.status(403).json({ error: 'Yetkisiz.' });
+    const mode = VALID_MODES.includes(req.query.mode) ? req.query.mode : null;
+    await clearScores(mode);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ── WebSocket Matchmaking ────────────────────────────────────────────────────
@@ -66,9 +72,17 @@ app.delete('/api/scores', (req, res) => {
 const server = http.createServer(app);
 const wss    = new WebSocket.Server({ server });
 
-const queue = [];        // { ws, nickname }
-const rooms = new Map(); // id → room
-let   nextRoomId = 1;
+const queue        = [];        // { ws, nickname }
+const rooms        = new Map(); // id → room
+const privateRooms = new Map(); // code → { ws, nickname, rank, timeout }
+let   nextRoomId   = 1;
+
+function genCode() {
+  let code;
+  do { code = Math.random().toString(36).slice(2, 8).toUpperCase(); }
+  while (privateRooms.has(code));
+  return code;
+}
 
 function wsSend(ws, data) {
   if (ws.readyState === WebSocket.OPEN) {
@@ -151,8 +165,37 @@ wss.on('connection', (ws) => {
     let data;
     try { data = JSON.parse(raw); } catch { return; }
 
+    // ── createPrivate: create a private room with invite code ───
+    if (data.type === 'createPrivate') {
+      const nickname = String(data.nickname || 'Player').trim().slice(0, 20) || 'Player';
+      const rank = (data.rank && typeof data.rank.name === 'string') ? { icon: String(data.rank.icon || '').slice(0, 8), name: String(data.rank.name).slice(0, 20) } : null;
+      ws._nickname = nickname;
+      ws._rank = rank;
+      const code = genCode();
+      const timeout = setTimeout(() => privateRooms.delete(code), 5 * 60 * 1000);
+      privateRooms.set(code, { ws, nickname, rank, timeout });
+      wsSend(ws, { type: 'privateCreated', code });
+    }
+
+    // ── joinPrivate: join a private room by code ─────────────────
+    else if (data.type === 'joinPrivate') {
+      const code = String(data.code || '').toUpperCase().trim();
+      const host = privateRooms.get(code);
+      if (!host || host.ws.readyState !== WebSocket.OPEN) {
+        wsSend(ws, { type: 'privateNotFound' });
+        return;
+      }
+      const nickname = String(data.nickname || 'Player').trim().slice(0, 20) || 'Player';
+      const rank = (data.rank && typeof data.rank.name === 'string') ? { icon: String(data.rank.icon || '').slice(0, 8), name: String(data.rank.name).slice(0, 20) } : null;
+      ws._nickname = nickname;
+      ws._rank = rank;
+      clearTimeout(host.timeout);
+      privateRooms.delete(code);
+      createRoom({ ws, nickname, rank }, { ws: host.ws, nickname: host.nickname, rank: host.rank });
+    }
+
     // ── join: enter matchmaking queue ───────────────────────────
-    if (data.type === 'join') {
+    else if (data.type === 'join') {
       const nickname = String(data.nickname || 'Player').trim().slice(0, 20) || 'Player';
       const rank = (data.rank && typeof data.rank.name === 'string') ? { icon: String(data.rank.icon || '').slice(0, 8), name: String(data.rank.name).slice(0, 20) } : null;
       ws._nickname = nickname;
@@ -237,6 +280,19 @@ wss.on('connection', (ws) => {
       }
     }
 
+    // ── emoji reaction ───────────────────────────────────────────
+    else if (data.type === 'emoji') {
+      const ALLOWED_EMOJIS = ['👍','🔥','😅','😎','🤝','💪','😂','🎉'];
+      const roomId = ws._roomId;
+      if (roomId === null) return;
+      const room = rooms.get(roomId);
+      if (!room) return;
+      if (!ALLOWED_EMOJIS.includes(data.emoji)) return;
+      const idx = ws._playerIdx;
+      const opp = room.players[1 - idx];
+      if (opp) wsSend(opp.ws, { type: 'opponentEmoji', emoji: data.emoji });
+    }
+
     // ── ping ─────────────────────────────────────────────────────
     else if (data.type === 'ping') {
       wsSend(ws, { type: 'pong' });
@@ -244,6 +300,11 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
+    // Remove from private room if waiting for a joiner
+    for (const [code, entry] of privateRooms) {
+      if (entry.ws === ws) { clearTimeout(entry.timeout); privateRooms.delete(code); break; }
+    }
+
     // Remove from queue if still waiting
     const qi = queue.findIndex(p => p.ws === ws);
     if (qi !== -1) { queue.splice(qi, 1); return; }

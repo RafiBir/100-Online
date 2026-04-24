@@ -523,7 +523,7 @@
     #btn-restart { background: var(--accent-dim); color: #fff; }
     #btn-hints, #btn-sound { background: var(--btn-secondary); color: var(--btn-secondary-text); }
     #btn-hints.active { background: var(--cell-valid-hover); color: var(--cell-valid-border); }
-    #btn-undo, #btn-tutorial, #btn-scores, #btn-achievements, #btn-lang { background: var(--btn-secondary); color: var(--btn-secondary-text); }
+    #btn-undo, #btn-tutorial, #btn-scores, #btn-achievements, #btn-stats, #btn-lang { background: var(--btn-secondary); color: var(--btn-secondary-text); }
     #btn-undo:disabled { opacity: 0.3; cursor: default; transform: none; }
 
     /* ── Tema seçici ─────────────────────────────────────────────── */
@@ -668,6 +668,84 @@
       padding: 16px;
     }
     #global-scores-modal.show { display: flex; }
+
+    /* ── Rütbe Modal ─────────────────────────────────── */
+    #rank-modal {
+      display: none; position: fixed; inset: 0;
+      background: var(--overlay-bg);
+      z-index: 20; align-items: center; justify-content: center; padding: 16px;
+    }
+    #rank-modal.show { display: flex; }
+    #rank-modal-box {
+      background: var(--surface); border: 2px solid var(--border);
+      border-radius: 16px; padding: 28px 24px;
+      max-width: 380px; width: 100%; max-height: 88vh; overflow-y: auto;
+    }
+    #rank-modal-box h2 { margin: 0 0 4px; font-size: 1.2rem; }
+    #rank-modal-box .rank-logic {
+      font-size: 0.78rem; color: var(--text-muted); margin-bottom: 16px;
+    }
+    #rank-modal-box .rank-my {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--accent-dim); border: 1px solid var(--accent);
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 16px;
+      font-size: 0.88rem; color: var(--accent); font-weight: 600;
+    }
+    .rank-tier-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 12px; border-radius: 10px; margin-bottom: 6px;
+      border: 1px solid transparent;
+    }
+    .rank-tier-row.active {
+      border-color: var(--accent); background: rgba(139,92,246,0.1);
+    }
+    .rank-tier-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .rank-tier-info { flex: 1; }
+    .rank-tier-name { font-weight: 700; font-size: 0.9rem; }
+    .rank-tier-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .rank-tier-range {
+      font-size: 0.72rem; color: var(--accent); font-weight: 600;
+      background: var(--surface2); border-radius: 6px; padding: 2px 7px;
+      white-space: nowrap;
+    }
+    #rank-badge { cursor: pointer; }
+    #rank-badge:hover { opacity: 0.85; }
+
+    /* ── İstatistik Modalı ───────────────────────────── */
+    #stats-modal {
+      display: none; position: fixed; inset: 0;
+      background: var(--overlay-bg); z-index: 20;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    #stats-modal.show { display: flex; }
+    #stats-box {
+      background: var(--surface); border: 2px solid var(--border);
+      border-radius: 16px; padding: 24px 20px;
+      max-width: 400px; width: 100%; max-height: 88vh; overflow-y: auto;
+    }
+    #stats-box h2 { margin: 0 0 14px; font-size: 1.15rem; }
+    #stats-tabs {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .stats-tab {
+      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text-muted);
+      font-size: 0.78rem; cursor: pointer; transition: all .15s;
+    }
+    .stats-tab.active {
+      background: var(--accent-dim); border-color: var(--accent);
+      color: #fff; font-weight: 700;
+    }
+    #stats-content { min-height: 100px; }
+    .stats-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .stats-row:last-child { border-bottom: none; }
+    .stats-val { font-weight: 700; color: var(--accent); font-size: 1rem; }
+    .stats-empty { color: var(--text-muted); font-size: 0.82rem; padding: 20px 0; text-align: center; }
+
     #global-scores-box {
       background: var(--surface);
       border: 2px solid var(--border);
@@ -1398,6 +1476,43 @@
       transition: opacity .2s;
     }
     #btn-race-undo:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    #emoji-panel {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .emoji-btn {
+      font-size: 1.3rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 5px 9px;
+      cursor: pointer;
+      transition: transform .1s, background .15s;
+      line-height: 1;
+    }
+    .emoji-btn:active { transform: scale(0.88); }
+    .emoji-btn:hover  { background: var(--accent-dim); }
+
+    #opponent-emoji-float {
+      position: fixed;
+      top: 30%;
+      right: 12%;
+      font-size: 3.5rem;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity .25s, transform .25s;
+    }
+    #opponent-emoji-float.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
     #btn-online-leave { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
     #btn-online-leave:hover { background: #7f1d1d; border-color: #ef4444; }
     .race-score-side {
@@ -1549,6 +1664,12 @@
       font-weight: 700; cursor: pointer; font-size: 0.9rem;
     }
     #btn-online-connect:hover { background: #2563eb; }
+    .online-tab {
+      padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text-muted);
+      font-size: 0.78rem; cursor: pointer; font-weight: 600; transition: all .15s;
+    }
+    .online-tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
     #btn-online-cancel {
       margin-top: 4px; background: transparent;
       border: 1px solid var(--border); color: var(--text-muted);
@@ -2000,6 +2121,17 @@
   <div id="race-undo-bar" style="display:none">
     <button id="btn-race-undo" disabled data-i18n="btn.race.undo">↩ Geri Al 📺</button>
   </div>
+  <div id="emoji-panel" style="display:none">
+    <button class="emoji-btn" onclick="sendEmoji('👍')">👍</button>
+    <button class="emoji-btn" onclick="sendEmoji('🔥')">🔥</button>
+    <button class="emoji-btn" onclick="sendEmoji('😅')">😅</button>
+    <button class="emoji-btn" onclick="sendEmoji('😎')">😎</button>
+    <button class="emoji-btn" onclick="sendEmoji('🤝')">🤝</button>
+    <button class="emoji-btn" onclick="sendEmoji('💪')">💪</button>
+    <button class="emoji-btn" onclick="sendEmoji('😂')">😂</button>
+    <button class="emoji-btn" onclick="sendEmoji('🎉')">🎉</button>
+  </div>
+  <div id="opponent-emoji-float"></div>
 
   <!-- ── İnteraktif Tutorial Overlay ──────────────────────────── -->
   <div id="it-overlay" style="display:none">
@@ -2022,6 +2154,7 @@
     <button id="btn-hint-best" style="display:none">💡 İpucu Al</button>
     <button id="btn-time-boost" style="display:none">⏱️ +30s (1)</button>
     <button id="btn-achievements" data-i18n="btn.achievements">🏅 Başarılar</button>
+    <button id="btn-stats" data-i18n="btn.stats">📊 İstatistik</button>
     <button id="btn-focus" style="display:none" data-i18n="btn.focus">🔍</button>
     <button id="btn-online-leave" style="display:none" data-i18n="online.leave">🚪 Terk Et</button>
   </div>
@@ -2080,6 +2213,31 @@
       <div id="global-scores-status" data-i18n="global.loading">Yükleniyor...</div>
       <div id="global-scores-list"></div>
       <button id="btn-global-scores-close" data-i18n="modal.close">Kapat</button>
+    </div>
+  </div>
+
+  <!-- ── Rütbe Bilgi Modalı ──────────────────────────────────── -->
+  <div id="rank-modal">
+    <div id="rank-modal-box">
+      <h2>🏅 Rütbe Sistemi</h2>
+      <p class="rank-logic">Rütbeniz, klasik modda oynadığınız son 10 oyunun ortalamasına göre hesaplanır. Ne kadar çok oynarsanız o kadar doğru bir ölçüm elde edilir.</p>
+      <div id="rank-my-status"></div>
+      <div id="rank-tier-list"></div>
+      <div style="text-align:center;margin-top:18px">
+        <button id="btn-rank-modal-close" style="background:var(--accent-dim);color:#fff;padding:10px 28px;border:none;border-radius:10px;cursor:pointer;font-size:0.95rem">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── İstatistik Modalı ────────────────────────────────────── -->
+  <div id="stats-modal">
+    <div id="stats-box">
+      <h2>📊 İstatistiklerim</h2>
+      <div id="stats-tabs"></div>
+      <div id="stats-content"></div>
+      <div style="text-align:center;margin-top:18px">
+        <button id="btn-stats-close" style="background:var(--accent-dim);color:#fff;padding:10px 28px;border:none;border-radius:10px;cursor:pointer;font-size:0.95rem">Kapat</button>
+      </div>
     </div>
   </div>
 
@@ -2211,8 +2369,31 @@
       <h2 id="online-waiting-title" data-i18n="online.waiting.title">Rakip Aranıyor...</h2>
       <p id="online-waiting-sub" data-i18n="online.waiting.sub">Seni bekleyen birini arıyoruz</p>
       <div id="online-nick-section">
+        <!-- Sekme butonları -->
+        <div id="online-mode-tabs" style="display:flex;gap:6px;width:100%;margin-bottom:4px">
+          <button id="tab-quick" class="online-tab active" onclick="switchOnlineTab('quick')" style="flex:1">🔍 Hızlı Eşleş</button>
+          <button id="tab-private" class="online-tab" onclick="switchOnlineTab('private')" style="flex:1">🔑 Özel Oda</button>
+        </div>
         <input id="online-nick-inp" type="text" maxlength="20" autocomplete="off">
-        <button id="btn-online-connect" data-i18n="online.connect.btn">🔍 Ara</button>
+        <!-- Hızlı eşleş alanı -->
+        <div id="online-tab-quick">
+          <button id="btn-online-connect" data-i18n="online.connect.btn" style="width:100%;padding:10px;border-radius:8px;background:#3b82f6;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.9rem">🔍 Ara</button>
+        </div>
+        <!-- Özel oda alanı -->
+        <div id="online-tab-private" style="display:none;flex-direction:column;gap:8px;width:100%">
+          <button id="btn-create-private" style="width:100%;padding:10px;border-radius:8px;background:#7c3aed;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.9rem">🏠 Oda Oluştur</button>
+          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem">— veya —</div>
+          <div style="display:flex;gap:6px">
+            <input id="private-code-inp" type="text" maxlength="6" placeholder="Oda Kodu" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center" autocomplete="off">
+            <button id="btn-join-private" style="padding:8px 14px;border-radius:8px;background:#2563eb;color:#fff;border:none;font-weight:700;cursor:pointer">Katıl</button>
+          </div>
+          <!-- Oluşturulan oda kodu göstergesi -->
+          <div id="private-code-display" style="display:none;text-align:center;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;padding:10px">
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px">Arkadaşına bu kodu gönder:</div>
+            <div id="private-code-val" style="font-size:1.8rem;font-weight:900;letter-spacing:4px;color:var(--accent)"></div>
+            <button id="btn-copy-code" style="margin-top:6px;padding:4px 14px;border-radius:6px;background:var(--accent-dim);color:#fff;border:none;cursor:pointer;font-size:0.78rem">📋 Kopyala</button>
+          </div>
+        </div>
       </div>
       <button id="btn-online-cancel" data-i18n="online.waiting.cancel">İptal</button>
     </div>
@@ -2260,6 +2441,7 @@
         'btn.hint.best':        '💡 En İyi Hamle',
         'btn.hint.take':        '💡 İpucu Al',
         'btn.achievements':     '🏅 Başarılar',
+        'btn.stats':            '📊 İstatistik',
         'hint.default':         'İstediğin hücreye tıkla',
         'hint.valid':           'Yeşil hücrelerden birine tıkla',
         'hint.next':            'Sonraki sayıyı yerleştir',
@@ -2580,6 +2762,7 @@
         'btn.hint.best':        '💡 Best Move',
         'btn.hint.take':        '💡 Get Hint',
         'btn.achievements':     '🏅 Achievements',
+        'btn.stats':            '📊 Statistics',
         'hint.default':         'Tap any cell to place',
         'hint.valid':           'Tap one of the green cells',
         'hint.next':            'Place the next number',
@@ -3714,6 +3897,7 @@
         document.getElementById('race-score-bar').style.display = 'none';
         document.getElementById('race-player-label').style.display = 'none';
         document.getElementById('race-undo-bar').style.display = 'none';
+        document.getElementById('emoji-panel').style.display = 'none';
         document.getElementById('grid').style.opacity = '1';
         gridEl_resetStyle();
       }
@@ -3813,6 +3997,7 @@
           if (_br2) _br2.style.display = 'none';
         }
         document.getElementById('race-undo-bar').style.display = isOnlineRace ? 'none' : '';
+        document.getElementById('emoji-panel').style.display = isOnlineRace ? '' : 'none';
         updateRaceUndoBtn();
         document.getElementById('bot-grid').style.opacity = '1';
         document.getElementById('grid').style.opacity = '1';
@@ -4453,6 +4638,172 @@
       el.title = `Klasik mod, son ${Math.min(info.total, 10)} oyun ortalaması: ${info.avg}`;
     }
 
+    const RANK_TIER_DESCS = [
+      'Oyunun zirvesi. Efsanelerin de üstünde.',
+      'Oyunu olağanüstü bir seviyede oynuyorsun.',
+      'Stratejin güçlü, sezgin keskin.',
+      'Deneyim ve beceri bir arada.',
+      'Oyunun içinde rahatça geziniyorsun.',
+      'Temel stratejilere hakimsin.',
+      'Oyunu anlıyorsun, gelişiyorsun.',
+      'Henüz öğrenme aşamasındasın.',
+      'Her yolculuk bir adımla başlar.',
+    ];
+
+    function openRankModal() {
+      const modal   = document.getElementById('rank-modal');
+      const myDiv   = document.getElementById('rank-my-status');
+      const listDiv = document.getElementById('rank-tier-list');
+      const info    = getClassicRankInfo();
+
+      if (info) {
+        const gamesUsed = Math.min(info.total, 10);
+        myDiv.innerHTML = `<div class="rank-my">
+          <span style="font-size:1.4rem">${info.tier.icon}</span>
+          <div style="flex:1">
+            <div style="font-weight:700">${info.tier.name}</div>
+            <div style="font-size:0.78rem;color:var(--text-muted)">Son ${gamesUsed} oyun ortalaması: <strong>${info.avg}</strong></div>
+          </div>
+        </div>`;
+      } else {
+        myDiv.innerHTML = `<div class="rank-my" style="text-align:center;color:var(--text-muted);font-size:0.82rem">Henüz klasik mod oynaman gerekiyor.</div>`;
+      }
+
+      listDiv.innerHTML = RANK_TIERS.map((tier, i) => {
+        const next = RANK_TIERS[i - 1];
+        const maxVal = next ? next.min - 1 : 100;
+        const range = tier.min === 0 ? `0 - ${maxVal}` : `${tier.min} - ${maxVal}`;
+        const isActive = info && info.tier === tier;
+        return `<div class="rank-tier-row${isActive ? ' active' : ''}">
+          <div class="rank-tier-icon">${tier.icon}</div>
+          <div class="rank-tier-info">
+            <div class="rank-tier-name">${tier.name}</div>
+            <div class="rank-tier-desc">${RANK_TIER_DESCS[i]}</div>
+          </div>
+          <div class="rank-tier-range">${range}</div>
+        </div>`;
+      }).join('');
+
+      modal.classList.add('show');
+    }
+
+    document.getElementById('rank-badge').addEventListener('click', openRankModal);
+    document.getElementById('btn-rank-modal-close').addEventListener('click', () =>
+      document.getElementById('rank-modal').classList.remove('show'));
+    document.getElementById('rank-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('rank-modal'))
+        document.getElementById('rank-modal').classList.remove('show');
+    });
+
+    // ── Oyuncu İstatistikleri ────────────────────────────────────
+    const STATS_KEY = 'stats_100oyunu';
+    const STATS_MODES = [
+      { key: 'serbest',      label: 'Klasik',      type: 'score'  },
+      { key: 'surpriz',      label: 'Sürpriz',     type: 'score'  },
+      { key: 'gunluk',       label: 'Günlük',      type: 'score'  },
+      { key: 'bulmaca',      label: 'Bulmaca',     type: 'puzzle' },
+      { key: 'zaman',        label: 'Zaman',       type: 'time'   },
+      { key: 'yaris_bot',    label: 'Yarış-Bot',   type: 'race'   },
+      { key: 'yaris_online', label: 'Yarış-Online',type: 'online' },
+    ];
+
+    function loadStats() {
+      try { return JSON.parse(localStorage.getItem(STATS_KEY)) || {}; } catch { return {}; }
+    }
+
+    function saveGameStat(modeKey, result) {
+      const stats = loadStats();
+      if (!stats[modeKey]) stats[modeKey] = {};
+      const s = stats[modeKey];
+      s.totalGames = (s.totalGames || 0) + 1;
+      if (result.score !== undefined) {
+        if (!s.scores) s.scores = [];
+        s.scores.push(result.score);
+        if (s.scores.length > 50) s.scores.splice(0, s.scores.length - 50);
+        s.bestScore = Math.max(s.bestScore || 0, result.score);
+      }
+      if (result.won !== undefined) {
+        if (result.won === 'win')  s.wins   = (s.wins   || 0) + 1;
+        if (result.won === 'lose') s.losses = (s.losses || 0) + 1;
+        if (result.won === 'draw') s.draws  = (s.draws  || 0) + 1;
+      }
+      if (result.completedPuzzle) s.completedPuzzles = (s.completedPuzzles || 0) + 1;
+      if (result.completedLevel)  s.completedLevels  = (s.completedLevels  || 0) + 1;
+      localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    }
+
+    let _statsActiveTab = 'serbest';
+
+    function openStatsModal() {
+      _statsActiveTab = 'serbest';
+      renderStatsModal();
+      document.getElementById('stats-modal').classList.add('show');
+    }
+
+    function renderStatsModal() {
+      const stats = loadStats();
+      const tabsEl = document.getElementById('stats-tabs');
+      const contentEl = document.getElementById('stats-content');
+
+      tabsEl.innerHTML = STATS_MODES.map(m =>
+        `<button class="stats-tab${_statsActiveTab === m.key ? ' active' : ''}" data-mkey="${m.key}">${m.label}</button>`
+      ).join('');
+
+      tabsEl.querySelectorAll('.stats-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          _statsActiveTab = btn.dataset.mkey;
+          renderStatsModal();
+        });
+      });
+
+      const mode = STATS_MODES.find(m => m.key === _statsActiveTab);
+      const s = stats[_statsActiveTab] || {};
+      const total = s.totalGames || 0;
+
+      if (!total) {
+        contentEl.innerHTML = `<div class="stats-empty">Henüz bu modda oyun oynamadınız.</div>`;
+        return;
+      }
+
+      let rows = [`<div class="stats-row"><span>Toplam Oyun</span><span class="stats-val">${total}</span></div>`];
+
+      if (mode.type === 'score' || mode.type === 'puzzle' || mode.type === 'time') {
+        if (s.bestScore !== undefined)
+          rows.push(`<div class="stats-row"><span>En İyi Skor</span><span class="stats-val">${s.bestScore}</span></div>`);
+        if (s.scores && s.scores.length) {
+          const last = s.scores.slice(-10);
+          const avg = Math.round(last.reduce((a, b) => a + b, 0) / last.length);
+          rows.push(`<div class="stats-row"><span>Son 10 Oyun Ort.</span><span class="stats-val">${avg}</span></div>`);
+        }
+        if (s.completedPuzzles !== undefined)
+          rows.push(`<div class="stats-row"><span>Tamamlanan Bulmaca</span><span class="stats-val">${s.completedPuzzles}</span></div>`);
+        if (s.completedLevels !== undefined)
+          rows.push(`<div class="stats-row"><span>Tamamlanan Seviye</span><span class="stats-val">${s.completedLevels}</span></div>`);
+      }
+
+      if (mode.type === 'race' || mode.type === 'online') {
+        const wins   = s.wins   || 0;
+        const losses = s.losses || 0;
+        const draws  = s.draws  || 0;
+        const wr = total ? Math.round((wins / total) * 100) : 0;
+        rows.push(`<div class="stats-row"><span>Kazanma</span><span class="stats-val" style="color:#4ade80">${wins}</span></div>`);
+        rows.push(`<div class="stats-row"><span>Kaybetme</span><span class="stats-val" style="color:var(--lose-color)">${losses}</span></div>`);
+        if (mode.type === 'online')
+          rows.push(`<div class="stats-row"><span>Beraberlik</span><span class="stats-val" style="color:var(--text-muted)">${draws}</span></div>`);
+        rows.push(`<div class="stats-row"><span>Kazanma Oranı</span><span class="stats-val">%${wr}</span></div>`);
+      }
+
+      contentEl.innerHTML = rows.join('');
+    }
+
+    document.getElementById('btn-stats').addEventListener('click', openStatsModal);
+    document.getElementById('btn-stats-close').addEventListener('click', () =>
+      document.getElementById('stats-modal').classList.remove('show'));
+    document.getElementById('stats-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('stats-modal'))
+        document.getElementById('stats-modal').classList.remove('show');
+    });
+
     function saveScore(score) {
       const scores = loadScores();
       const date = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: '2-digit' });
@@ -4609,6 +4960,7 @@
             // Tüm bölümler bitti!
             const finalScore   = timeModeScore;
             const savedScores  = saveTimeScore(finalScore, TIME_LEVELS.length);
+            saveGameStat('zaman', { score: finalScore, completedLevel: true });
             const box = document.getElementById('overlay-box');
             box.className = 'win';
             document.getElementById('overlay-title').textContent   = T('win.time.all');
@@ -4629,6 +4981,7 @@
         soundLose();
         const finalScore   = timeModeScore + (currentNumber - 1);
         const savedScores  = saveTimeScore(finalScore, currentTimeLevelIdx + 1);
+        saveGameStat('zaman', { score: finalScore });
         const box = document.getElementById('overlay-box');
         box.className = 'lose';
         document.getElementById('overlay-title').textContent   = timeLeft <= 0 ? T('lose.time.up') : T('lose.no.moves');
@@ -4647,6 +5000,13 @@
       const score     = currentNumber - 1;
       const isMiniGrid = activePuzzle?.type === 'full';
       const scores    = isMiniGrid ? loadScores() : saveScore(score);
+
+      // İstatistik kaydet
+      if (currentMode === 'serbest' || currentMode === 'surpriz' || currentMode === 'gunluk') {
+        saveGameStat(currentMode, { score });
+      } else if (currentMode === 'bulmaca') {
+        saveGameStat('bulmaca', { score, completedPuzzle: won });
+      }
 
       // Streak güncelle
       const streakCount = markPlayedToday();
@@ -5287,6 +5647,12 @@
     }
     function closeOnlineWaiting() {
       document.getElementById('online-waiting-overlay').classList.remove('show');
+      document.getElementById('private-code-display').style.display = 'none';
+      document.getElementById('private-code-val').textContent = '';
+      document.getElementById('private-code-inp').value = '';
+      const createBtn = document.getElementById('btn-create-private');
+      if (createBtn) createBtn.disabled = false;
+      switchOnlineTab('quick');
     }
 
     function cancelOnlineRace() {
@@ -5349,6 +5715,18 @@
     function handleOnlineMessage(data) {
       switch (data.type) {
         case 'waiting':
+          break;
+
+        case 'privateCreated':
+          document.getElementById('private-code-val').textContent = data.code;
+          document.getElementById('private-code-display').style.display = '';
+          document.getElementById('btn-create-private').disabled = true;
+          break;
+
+        case 'privateNotFound':
+          document.getElementById('private-code-inp').style.borderColor = '#ef4444';
+          setTimeout(() => { document.getElementById('private-code-inp').style.borderColor = ''; }, 2000);
+          showToast({ icon: '❌', name: 'Oda bulunamadı. Kodu kontrol et.', xp: 0, type: 'error' });
           break;
 
         case 'matched':
@@ -5443,7 +5821,31 @@
           if (raceTimerInterval) { clearInterval(raceTimerInterval); raceTimerInterval = null; }
           showOnlineResult(currentNumber - 1, 0, 'you', true);
           break;
+
+        case 'opponentEmoji':
+          showOpponentEmoji(msg.emoji);
+          break;
       }
+    }
+
+    let _emojiFloatTimeout = null;
+    function showOpponentEmoji(emoji) {
+      const el = document.getElementById('opponent-emoji-float');
+      if (!el) return;
+      el.textContent = emoji;
+      el.classList.remove('show');
+      void el.offsetWidth; // reflow to restart transition
+      el.classList.add('show');
+      if (_emojiFloatTimeout) clearTimeout(_emojiFloatTimeout);
+      _emojiFloatTimeout = setTimeout(() => {
+        el.classList.remove('show');
+        _emojiFloatTimeout = null;
+      }, 2000);
+    }
+
+    function sendEmoji(emoji) {
+      if (!onlineSocket || onlineSocket.readyState !== WebSocket.OPEN) return;
+      onlineSocket.send(JSON.stringify({ type: 'emoji', emoji }));
     }
 
     function showOnlineResult(myScore, oppScore, winner, disconnected) {
@@ -5452,6 +5854,8 @@
       if (won)       { soundWin(); launchConfetti(); }
       else if (draw) { soundWin(); }
       else             soundLose();
+
+      saveGameStat('yaris_online', { won: won ? 'win' : draw ? 'draw' : 'lose' });
 
       const box = document.getElementById('overlay-box');
       box.className = (won || draw) ? 'win' : 'lose';
@@ -5549,6 +5953,71 @@
       connectOnlineRace(nick);
     }
 
+    function switchOnlineTab(tab) {
+      document.getElementById('online-tab-quick').style.display   = tab === 'quick'   ? '' : 'none';
+      document.getElementById('online-tab-private').style.display = tab === 'private' ? 'flex' : 'none';
+      document.getElementById('tab-quick').classList.toggle('active',   tab === 'quick');
+      document.getElementById('tab-private').classList.toggle('active', tab === 'private');
+    }
+
+    function getNickForOnline() {
+      const inp  = document.getElementById('online-nick-inp');
+      const nick = inp.value.trim();
+      if (!nick) { inp.focus(); return null; }
+      localStorage.setItem('nickname_100oyunu', nick);
+      return nick;
+    }
+
+    function createPrivateRoom() {
+      const nick = getNickForOnline();
+      if (!nick) return;
+      document.getElementById('online-nick-section').style.display = 'none';
+      // Bağlantıyı kur ve createPrivate gönder
+      const myRankInfo = getClassicRankInfo();
+      const rankPayload = myRankInfo ? { icon: myRankInfo.tier.icon, name: myRankInfo.tier.name } : null;
+      const WS_URL = location.hostname === 'localhost' ? 'ws://localhost:3001' : 'wss://100oyunu-server-production.up.railway.app';
+      onlineSocket = new WebSocket(WS_URL);
+      onlineSocket.onopen = () => {
+        onlineSocket.send(JSON.stringify({ type: 'createPrivate', nickname: nick, rank: rankPayload }));
+        // Kodu beklerken nick section'ı yeniden göster
+        document.getElementById('online-nick-section').style.display = '';
+      };
+      onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
+      onlineSocket.onclose   = () => { if (isOnlineRace) { gameActive = false; playerGameOver = true; botGameOver = true; hideOnlineWaiting(); if (!document.getElementById('overlay').classList.contains('show')) showOnlineResult(currentNumber - 1, 0, 'you', true); } };
+      onlineSocket.onerror   = () => showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' });
+    }
+
+    function joinPrivateRoom() {
+      const nick = getNickForOnline();
+      if (!nick) return;
+      const code = document.getElementById('private-code-inp').value.trim().toUpperCase();
+      if (code.length < 4) { document.getElementById('private-code-inp').focus(); return; }
+      document.getElementById('online-nick-section').style.display = 'none';
+      const myRankInfo = getClassicRankInfo();
+      const rankPayload = myRankInfo ? { icon: myRankInfo.tier.icon, name: myRankInfo.tier.name } : null;
+      const WS_URL = location.hostname === 'localhost' ? 'ws://localhost:3001' : 'wss://100oyunu-server-production.up.railway.app';
+      onlineSocket = new WebSocket(WS_URL);
+      onlineSocket.onopen = () => {
+        onlineSocket.send(JSON.stringify({ type: 'joinPrivate', code, nickname: nick, rank: rankPayload }));
+      };
+      onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
+      onlineSocket.onclose   = () => { if (isOnlineRace) { gameActive = false; playerGameOver = true; botGameOver = true; hideOnlineWaiting(); if (!document.getElementById('overlay').classList.contains('show')) showOnlineResult(currentNumber - 1, 0, 'you', true); } };
+      onlineSocket.onerror   = () => showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' });
+    }
+
+    document.getElementById('btn-create-private').addEventListener('click', createPrivateRoom);
+    document.getElementById('btn-join-private').addEventListener('click', joinPrivateRoom);
+    document.getElementById('private-code-inp').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') joinPrivateRoom();
+    });
+    document.getElementById('btn-copy-code').addEventListener('click', () => {
+      const code = document.getElementById('private-code-val').textContent;
+      navigator.clipboard?.writeText(code).then(() => {
+        document.getElementById('btn-copy-code').textContent = '✅ Kopyalandı';
+        setTimeout(() => { document.getElementById('btn-copy-code').textContent = '📋 Kopyala'; }, 1500);
+      });
+    });
+
     function checkRaceEnd() {
       if (isOnlineRace) return;
       if (!playerGameOver || !botGameOver) return;
@@ -5561,6 +6030,7 @@
       if (won) { soundWin(); launchConfetti(); }
       else if (draw) { soundWin(); }
       else { soundLose(); }
+      saveGameStat('yaris_bot', { won: won ? 'win' : draw ? 'draw' : 'lose' });
       const box = document.getElementById('overlay-box');
       box.className = won ? 'win' : (draw ? 'win' : 'lose');
       document.getElementById('overlay-title').textContent = draw ? '🤝 Berabere Bitti!' : (won ? '🏆 Kazandın!' : '🤖 Bot Kazandı!');
