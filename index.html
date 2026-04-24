@@ -1987,6 +1987,7 @@
     </div>
     <div class="race-side" id="race-bot-side" style="display:none">
       <div class="race-label" id="race-bot-label">BOT</div>
+      <div id="race-bot-rank" style="display:none;font-size:0.72rem;font-weight:600;color:var(--accent);margin-bottom:2px;text-align:center"></div>
       <div id="bot-grid"></div>
     </div>
   </div>
@@ -3064,6 +3065,7 @@
     let isOnlineRace = false;
     let onlineSocket = null;
     let onlineOpponentNickname = '';
+    let onlineOpponentRank = null;
     let focusMode = false;
     // ── Sürpriz mod state ───────────────────────────────────────────
     let surpriseCells  = [];   // [{r, c, eventType}]
@@ -4435,11 +4437,11 @@
     function updateRankBadge() {
       const el = document.getElementById('rank-badge');
       if (!el) return;
-      const info = (currentMode === 'serbest') ? getClassicRankInfo() : null;
+      const info = getClassicRankInfo();
       if (!info) { el.style.display = 'none'; return; }
       el.style.display = 'flex';
       el.textContent = `${info.tier.icon} ${info.tier.name}`;
-      el.title = `Son ${Math.min(info.total, 10)} oyun ortalaması: ${info.avg}`;
+      el.title = `Klasik mod, son ${Math.min(info.total, 10)} oyun ortalaması: ${info.avg}`;
     }
 
     function saveScore(score) {
@@ -5309,7 +5311,9 @@
       }
 
       onlineSocket.onopen = () => {
-        onlineSocket.send(JSON.stringify({ type: 'join', nickname }));
+        const myRankInfo = getClassicRankInfo();
+        const myRank = myRankInfo ? { icon: myRankInfo.tier.icon, name: myRankInfo.tier.name } : null;
+        onlineSocket.send(JSON.stringify({ type: 'join', nickname, rank: myRank }));
       };
       onlineSocket.onmessage = (evt) => {
         try { handleOnlineMessage(JSON.parse(evt.data)); } catch {}
@@ -5341,6 +5345,7 @@
         case 'matched':
           isOnlineRace = true;
           onlineOpponentNickname = data.opponentNickname;
+          onlineOpponentRank = data.opponentRank || null;
           document.getElementById('online-waiting-title').textContent = T('online.matched.title');
           document.getElementById('online-waiting-sub').textContent = data.opponentNickname + T('online.matched.sub');
           document.getElementById('online-waiting-anim').textContent = '🎯';
@@ -5354,6 +5359,15 @@
           gameHasStarted = true;
           const _bl = document.getElementById('race-bot-label');
           if (_bl) _bl.textContent = onlineOpponentNickname || 'OPPONENT';
+          const _br = document.getElementById('race-bot-rank');
+          if (_br) {
+            if (onlineOpponentRank) {
+              _br.textContent = `${onlineOpponentRank.icon} ${onlineOpponentRank.name}`;
+              _br.style.display = '';
+            } else {
+              _br.style.display = 'none';
+            }
+          }
           updateModeUI('yaris');
           initGame();
           break;
