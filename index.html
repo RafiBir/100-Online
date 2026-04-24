@@ -5646,7 +5646,9 @@
       document.getElementById('private-code-val').textContent = '';
       document.getElementById('private-code-inp').value = '';
       const createBtn = document.getElementById('btn-create-private');
-      if (createBtn) createBtn.disabled = false;
+      if (createBtn) { createBtn.disabled = false; createBtn.textContent = '🏠 Oda Oluştur'; }
+      const joinBtn = document.getElementById('btn-join-private');
+      if (joinBtn) { joinBtn.disabled = false; joinBtn.textContent = 'Katıl'; }
       switchOnlineTab('quick');
     }
 
@@ -5712,17 +5714,25 @@
         case 'waiting':
           break;
 
-        case 'privateCreated':
-          document.getElementById('private-code-val').textContent = data.code;
+        case 'privateCreated': {
+          const btn = document.getElementById('btn-create-private');
+          btn.disabled    = true;
+          btn.textContent = '⏳ Arkadaş bekleniyor...';
+          document.getElementById('private-code-val').textContent    = data.code;
           document.getElementById('private-code-display').style.display = '';
-          document.getElementById('btn-create-private').disabled = true;
+          // Özel oda sekmesinin görünür olduğundan emin ol
+          switchOnlineTab('private');
           break;
+        }
 
-        case 'privateNotFound':
+        case 'privateNotFound': {
+          const joinBtn = document.getElementById('btn-join-private');
+          joinBtn.disabled = false; joinBtn.textContent = 'Katıl';
           document.getElementById('private-code-inp').style.borderColor = '#ef4444';
           setTimeout(() => { document.getElementById('private-code-inp').style.borderColor = ''; }, 2000);
           showToast({ icon: '❌', name: 'Oda bulunamadı. Kodu kontrol et.', xp: 0, type: 'error' });
           break;
+        }
 
         case 'matched':
           isOnlineRace = true;
@@ -5963,23 +5973,27 @@
       return nick;
     }
 
-    function createPrivateRoom() {
-      const nick = getNickForOnline();
-      if (!nick) return;
-      document.getElementById('online-nick-section').style.display = 'none';
-      // Bağlantıyı kur ve createPrivate gönder
-      const myRankInfo = getClassicRankInfo();
+    function _openOnlineSocket(msgOnOpen) {
+      const myRankInfo  = getClassicRankInfo();
       const rankPayload = myRankInfo ? { icon: myRankInfo.tier.icon, name: myRankInfo.tier.name } : null;
-      const WS_URL = location.hostname === 'localhost' ? 'ws://localhost:3001' : 'wss://100oyunu-server-production.up.railway.app';
+      const WS_URL = location.hostname === 'localhost'
+        ? 'ws://localhost:3001'
+        : 'wss://100oyunu-server-production.up.railway.app';
       onlineSocket = new WebSocket(WS_URL);
-      onlineSocket.onopen = () => {
-        onlineSocket.send(JSON.stringify({ type: 'createPrivate', nickname: nick, rank: rankPayload }));
-        // Kodu beklerken nick section'ı yeniden göster
-        document.getElementById('online-nick-section').style.display = '';
-      };
+      onlineSocket.onopen    = () => onlineSocket.send(JSON.stringify({ ...msgOnOpen, rank: rankPayload }));
       onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
       onlineSocket.onclose   = () => { if (isOnlineRace) { gameActive = false; playerGameOver = true; botGameOver = true; hideOnlineWaiting(); if (!document.getElementById('overlay').classList.contains('show')) showOnlineResult(currentNumber - 1, 0, 'you', true); } };
       onlineSocket.onerror   = () => showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' });
+    }
+
+    function createPrivateRoom() {
+      const nick = getNickForOnline();
+      if (!nick) return;
+      // Butonu devre dışı bırak, bağlanıyor göster
+      const btn = document.getElementById('btn-create-private');
+      btn.disabled  = true;
+      btn.textContent = '⏳ Bağlanıyor...';
+      _openOnlineSocket({ type: 'createPrivate', nickname: nick });
     }
 
     function joinPrivateRoom() {
@@ -5987,17 +6001,10 @@
       if (!nick) return;
       const code = document.getElementById('private-code-inp').value.trim().toUpperCase();
       if (code.length < 4) { document.getElementById('private-code-inp').focus(); return; }
-      document.getElementById('online-nick-section').style.display = 'none';
-      const myRankInfo = getClassicRankInfo();
-      const rankPayload = myRankInfo ? { icon: myRankInfo.tier.icon, name: myRankInfo.tier.name } : null;
-      const WS_URL = location.hostname === 'localhost' ? 'ws://localhost:3001' : 'wss://100oyunu-server-production.up.railway.app';
-      onlineSocket = new WebSocket(WS_URL);
-      onlineSocket.onopen = () => {
-        onlineSocket.send(JSON.stringify({ type: 'joinPrivate', code, nickname: nick, rank: rankPayload }));
-      };
-      onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
-      onlineSocket.onclose   = () => { if (isOnlineRace) { gameActive = false; playerGameOver = true; botGameOver = true; hideOnlineWaiting(); if (!document.getElementById('overlay').classList.contains('show')) showOnlineResult(currentNumber - 1, 0, 'you', true); } };
-      onlineSocket.onerror   = () => showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' });
+      const btn = document.getElementById('btn-join-private');
+      btn.disabled = true;
+      btn.textContent = '⏳';
+      _openOnlineSocket({ type: 'joinPrivate', code, nickname: nick });
     }
 
     document.getElementById('btn-create-private').addEventListener('click', createPrivateRoom);
