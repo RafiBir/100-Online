@@ -2121,6 +2121,7 @@
         <button class="mode-opt"        data-mode="zaman">⏱️ <span data-i18n="mode.zaman">Zaman</span></button>
         <button class="mode-opt"        data-mode="surpriz">⚡ <span data-i18n="mode.surpriz">Sürpriz</span></button>
         <button class="mode-opt"        data-mode="yaris">🏁 <span data-i18n="mode.yaris">Yarış</span></button>
+        <button class="mode-opt"        data-mode="coop">🤝 <span data-i18n="mode.coop">Eşli Mod</span></button>
       </div>
     </div>
   </div>
@@ -5625,6 +5626,7 @@
         else if (currentMode === 'gunluk') openPuzzleIntro();
         else if (currentMode === 'zaman') openTimeLevelSelect();
         else if (currentMode === 'yaris') openRaceLevelSelect();
+        else if (currentMode === 'coop') showOnlineNickSection('coop');
         else initGame();
       });
     });
