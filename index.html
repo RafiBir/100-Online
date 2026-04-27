@@ -5683,7 +5683,7 @@
           : T('lose.classic.msg', { score });
       }
 
-      if (isMiniGrid || currentMode === 'serbest' || currentMode === 'bulmaca' || currentMode === 'surpriz') {
+      if (isMiniGrid || currentMode === 'serbest' || currentMode === 'bulmaca' || currentMode === 'surpriz' || currentMode === 'gunluk') {
         document.getElementById('overlay-score-highlight').innerHTML = '';
         document.getElementById('overlay-scores').innerHTML = '';
         if (currentMode === 'surpriz') saveSurprizScore(score);
