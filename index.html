@@ -3030,6 +3030,13 @@
         'ach.race_hard_win.desc':       'Zor modda botu yendin.',
         'ach.race_close.name':          'Kıl Payı',
         'ach.race_close.desc':          '1 puan farkla yarışı kazandın.',
+        'ach.cat.coop':                 '🤝 Eşli Mod',
+        'ach.coop_50.name':             'Takım Ruhu',
+        'ach.coop_50.desc':             'Eşli modda birlikte 50 sayı yerleştirdiniz.',
+        'ach.coop_first_win.name':      'İlk Birliktelik',
+        'ach.coop_first_win.desc':      'Eşli modda ilk kez tüm 100 sayıyı birlikte tamamladınız.',
+        'ach.coop_fast_win.name':       'Rüzgar Gibi',
+        'ach.coop_fast_win.desc':       'Eşli modu 3 dakika içinde tamamladınız.',
         'tut.s.t1': 'Centium\'a Hoş Geldin!',
         'tut.s.d1': `Amaç basit: <strong>10×10 grid</strong>i <strong>1'den 100'e</strong> kadar sayılarla doldurmak.<br><br>Her tıklamada sıradaki sayı seçtiğin hücreye yerleşir. Ama her hücreye gidemezsin, <strong>hareket kuralları</strong> var!`,
         'tut.s.t2': 'Yatay & Dikey Hareket',
@@ -3414,6 +3421,13 @@
         'ach.race_hard_win.desc':       'Beat the bot on Hard difficulty.',
         'ach.race_close.name':          'By a Thread',
         'ach.race_close.desc':          'Won a race by just 1 point.',
+        'ach.cat.coop':                 '🤝 Co-op Mode',
+        'ach.coop_50.name':             'Team Spirit',
+        'ach.coop_50.desc':             'Placed 50 numbers together in Co-op mode.',
+        'ach.coop_first_win.name':      'Together Strong',
+        'ach.coop_first_win.desc':      'Completed all 100 numbers together for the first time.',
+        'ach.coop_fast_win.name':       'Like the Wind',
+        'ach.coop_fast_win.desc':       'Finished Co-op mode in under 3 minutes.',
         'tut.s.t1': 'Welcome to 100 Game!',
         'tut.s.d1': `The goal is simple: fill the <strong>10×10 grid</strong> with numbers <strong>1 to 100</strong>.<br><br>Each tap places the next number in the selected cell. But you can't go anywhere, there are <strong>movement rules</strong>!`,
         'tut.s.t2': 'Horizontal & Vertical',
@@ -3796,6 +3810,7 @@
     let coopIsMyTurn = false;
     let coopPartnerName = '';
     let coopPartnerRank = null;
+    let coopStartTime = 0;
     let coopPartnerCells = new Set(); // "r,c" strings for partner cell coloring
     let coopPartnerLastR = -1, coopPartnerLastC = -1;
     let coopMyLastR = -1, coopMyLastC = -1;
@@ -4106,6 +4121,9 @@
         { id: 'race_perfect',    icon: '🌟', name: T('ach.race_perfect.name'),     desc: T('ach.race_perfect.desc'),    xp: 150, check: (s) => s.racePerfect },
         { id: 'race_hard_win',   icon: '🔥', name: T('ach.race_hard_win.name'),    desc: T('ach.race_hard_win.desc'),   xp: 100, check: (s) => s.raceWon && s.raceDiff === 'zor' },
         { id: 'race_close',      icon: '💨', name: T('ach.race_close.name'),       desc: T('ach.race_close.desc'),      xp: 60,  check: (s) => s.raceWon && s.raceMargin === 1 },
+        { id: 'coop_50',         icon: '🤝', name: T('ach.coop_50.name'),          desc: T('ach.coop_50.desc'),         xp: 30,  check: (s) => s.coopScore >= 50 },
+        { id: 'coop_first_win',  icon: '🎉', name: T('ach.coop_first_win.name'),   desc: T('ach.coop_first_win.desc'),  xp: 80,  check: (s) => s.coopWon },
+        { id: 'coop_fast_win',   icon: '⚡', name: T('ach.coop_fast_win.name'),    desc: T('ach.coop_fast_win.desc'),   xp: 120, check: (s) => s.coopWon && s.coopTime <= 180 },
       ];
     }
 
@@ -4158,6 +4176,7 @@
         { label: T('ach.cat.mini'),    ids: ['mini_first','mini_all'] },
         { label: T('ach.cat.surpriz'), ids: ['surpriz_first','surpriz_bomb','surpriz_rescue','surpriz_jump','surpriz_score50','surpriz_score75','surpriz_winner'] },
         { label: T('ach.cat.yaris'),   ids: ['race_first_win','race_perfect','race_hard_win','race_close'] },
+        { label: T('ach.cat.coop'),    ids: ['coop_50','coop_first_win','coop_fast_win'] },
       ];
     }
 
@@ -6487,6 +6506,7 @@
           coopPartnerCells = new Set();
           coopPartnerLastR = -1; coopPartnerLastC = -1; coopMyLastR = -1; coopMyLastC = -1;
           coopIsMyTurn = (coopMyRole === 'odd');
+          coopStartTime = Date.now();
           updateModeUI('coop');
           initGame();
           break;
@@ -6969,6 +6989,8 @@
       if (won) { soundWin(); launchConfetti(); } else soundLose();
 
       saveGameStat('coop_online', { won: won ? 'win' : 'lose', score });
+      const coopElapsed = coopStartTime ? Math.round((Date.now() - coopStartTime) / 1000) : 9999;
+      checkAchievements({ coopWon: won, coopScore: score, coopTime: coopElapsed });
 
       coopPartnerCells = new Set();
       coopPartnerLastR = -1; coopPartnerLastC = -1; coopMyLastR = -1; coopMyLastC = -1;
