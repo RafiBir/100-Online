@@ -329,7 +329,7 @@
       border-radius: 12px;
       padding: 6px;
       z-index: 500;
-      min-width: 160px;
+      width: max-content;
       box-shadow: 0 8px 24px #0008;
     }
     #mode-dropdown.open { display: flex; flex-direction: column; gap: 2px; }
@@ -350,7 +350,7 @@
       text-align: left;
       transition: background .15s, color .15s;
       white-space: nowrap;
-      width: 100%;
+      min-height: unset;
     }
     .mode-opt:hover { background: var(--surface2); color: var(--text); }
     .mode-opt.active { background: var(--accent-dim); color: #fff; }
