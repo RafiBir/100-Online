@@ -4446,6 +4446,7 @@
       if (currentMode === 'coop') {
         document.getElementById('coop-turn-bar').style.display = '';
         if (!coopIsMyTurn) gameActive = false;
+        updateCoopTurnUI();
       }
 
       updateXPBar(loadXP().total, false);
