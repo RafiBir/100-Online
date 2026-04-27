@@ -1,4 +1,4 @@
-const CACHE = 'oyun100-v2';
+const CACHE = 'centium-v1';
 const FILES = [
   './',
   './index.html',
