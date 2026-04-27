@@ -201,8 +201,9 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 8px;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: nowrap;
+      overflow: hidden;
     }
 
     #rank-area {
@@ -2307,6 +2308,14 @@
     }
 
     /* ── Reduced Motion ──────────────────────────────────────────── */
+    @media (max-width: 420px) {
+      .btn-label { display: none; }
+      #rank-area #btn-achievements,
+      #rank-area #btn-stats { padding: 4px 6px; }
+      #streak-badge { padding: 4px 8px; }
+      #top-bar button { min-width: unset; padding: 6px 10px; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after {
         animation-duration: 0.01ms !important;
@@ -2389,11 +2398,11 @@
 
   <!-- Streak + Mod seçici -->
   <div id="meta-bar">
-    <div id="streak-badge"><span class="flame">🔥</span> <span id="streak-num">0</span> <span data-i18n="label.streak">gün serisi</span></div>
+    <div id="streak-badge"><span class="flame">🔥</span> <span id="streak-num">0</span><span class="btn-label" id="streak-label" data-i18n="label.streak"> gün serisi</span></div>
     <div id="rank-area">
       <div id="rank-badge"></div>
-      <button id="btn-achievements" data-i18n="btn.achievements">🏅 Başarılar</button>
-      <button id="btn-stats" data-i18n="btn.stats">📊 İstatistik</button>
+      <button id="btn-achievements">🏅<span class="btn-label" data-i18n="btn.achievements.label"> Başarılar</span></button>
+      <button id="btn-stats">📊<span class="btn-label" data-i18n="btn.stats.label"> İstatistik</span></button>
     </div>
     <div id="mode-select-wrap">
       <button id="btn-mode-select"><span id="mode-select-icon">🎮</span> <span id="mode-select-label">Klasik</span></button>
@@ -2807,7 +2816,9 @@
         'btn.hint.best':        '💡 En İyi Hamle',
         'btn.hint.take':        '💡 İpucu Al',
         'btn.achievements':     '🏅 Başarılar',
+        'btn.achievements.label': ' Başarılar',
         'btn.stats':            '📊 İstatistik',
+        'btn.stats.label':      ' İstatistik',
         'stats.title':          '📊 İstatistiklerim',
         'stats.empty':          'Henüz bu modda oyun oynamadınız.',
         'stats.total':          'Toplam Oyun',
@@ -3189,7 +3200,9 @@
         'btn.hint.best':        '💡 Best Move',
         'btn.hint.take':        '💡 Get Hint',
         'btn.achievements':     '🏅 Achievements',
+        'btn.achievements.label': ' Achievements',
         'btn.stats':            '📊 Statistics',
+        'btn.stats.label':      ' Statistics',
         'stats.title':          '📊 My Statistics',
         'stats.empty':          'No games played in this mode yet.',
         'stats.total':          'Total Games',
