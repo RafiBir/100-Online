@@ -4027,8 +4027,10 @@
     }
 
     function updateStreakBadge(count) {
-      document.getElementById('streak-num').textContent = count;
-      document.getElementById('streak-badge').classList.toggle('active-streak', count >= 2);
+      const num = document.getElementById('streak-num');
+      const badge = document.getElementById('streak-badge');
+      if (num) num.textContent = count;
+      if (badge) badge.classList.toggle('active-streak', count >= 2);
     }
 
     // İlk yükleme
