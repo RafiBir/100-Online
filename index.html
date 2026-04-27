@@ -324,7 +324,10 @@
       align-items: center;
       margin-bottom: 10px;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 580px;
+      overflow: hidden;
     }
 
     #current-num {
@@ -341,7 +344,7 @@
       color: var(--accent);
     }
 
-    #hint { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+    #hint { font-size: 0.85rem; color: var(--text-muted); font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
 
     /* Combo göstergesi */
     #combo-display {
@@ -578,12 +581,41 @@
     }
 
     /* ── Controls ───────────────────────────────────────────────── */
+    #grid-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    #btn-focus {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      min-height: unset;
+      font-size: 1rem;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    #btn-focus:hover { background: var(--accent); color: #fff; opacity: 1; }
+
     #controls {
       margin-top: 12px;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
       justify-content: center;
+      width: 100%;
+      max-width: 580px;
+    }
+    #controls button {
+      font-size: 0.82rem;
+      padding: 8px 14px;
+      min-height: 38px;
     }
 
     button {
@@ -2402,7 +2434,10 @@
     <div class="race-side" id="race-player-side">
       <div class="race-label" id="race-player-label" style="display:none" data-i18n="race.player.you">SEN</div>
       <div id="race-player-rank" style="display:none;font-size:0.72rem;font-weight:600;color:var(--accent);margin-bottom:2px;text-align:center"></div>
-      <div id="grid"></div>
+      <div id="grid-wrapper">
+        <div id="grid"></div>
+        <button id="btn-focus" style="display:none" data-i18n="btn.focus">🔍</button>
+      </div>
     </div>
     <div class="race-side" id="race-bot-side" style="display:none">
       <div class="race-label" id="race-bot-label">BOT</div>
@@ -2458,7 +2493,6 @@
     <!-- Koşullu / mod'a özel (gizli) -->
     <button id="btn-hint-best" style="display:none">💡 İpucu Al</button>
     <button id="btn-time-boost" style="display:none">⏱️ +30s (1)</button>
-    <button id="btn-focus" style="display:none" data-i18n="btn.focus">🔍</button>
     <button id="btn-online-leave" style="display:none" data-i18n="online.leave">🚪 Terk Et</button>
   </div>
   <button id="btn-focus-exit" data-i18n="btn.focus.exit">✕ Odaktan Çık</button>
