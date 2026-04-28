@@ -7,6 +7,8 @@ const { insertScore, getTopScores, getRank, clearScores } = require('./db');
 const ADMIN_KEY   = process.env.ADMIN_KEY || 'gizli123';
 const VALID_MODES = ['serbest', 'surpriz'];
 
+const scoreRateLimit = new Map(); // ip -> lastSubmitMs
+
 const app  = express();
 const PORT = process.env.PORT || 3001;
 
@@ -33,6 +35,12 @@ app.get('/api/scores', async (req, res) => {
 // POST /api/scores  { nickname, score, mode }
 app.post('/api/scores', async (req, res) => {
   try {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    const last = scoreRateLimit.get(ip) || 0;
+    if (now - last < 60_000) return res.status(429).json({ error: 'Çok sık istek. 1 dakika bekle.' });
+    scoreRateLimit.set(ip, now);
+
     let { nickname, score, mode } = req.body;
 
     if (typeof nickname !== 'string' || nickname.trim().length === 0) {
