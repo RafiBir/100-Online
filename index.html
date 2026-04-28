@@ -792,9 +792,11 @@
       position: fixed; inset: 0;
       background: var(--overlay-bg);
       z-index: 150;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       padding: 16px;
+      overflow-y: auto;
+      padding-top: max(16px, 20vh);
     }
     #global-submit-modal.show { display: flex; }
     #global-submit-box {
@@ -7560,6 +7562,11 @@
     document.getElementById('btn-global-send').addEventListener('click', submitGlobalScore);
     document.getElementById('global-nickname-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') submitGlobalScore();
+    });
+    document.getElementById('global-nickname-input').addEventListener('focus', () => {
+      setTimeout(() => {
+        document.getElementById('global-nickname-input').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
     });
     document.getElementById('btn-global-cancel').addEventListener('click', () =>
       document.getElementById('global-submit-modal').classList.remove('show'));
