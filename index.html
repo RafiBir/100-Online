@@ -101,6 +101,7 @@
     /* ── Base ───────────────────────────────────────────────────── */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html { overflow-x: hidden; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -112,6 +113,7 @@
       justify-content: flex-start;
       padding: 12px 16px 24px;
       transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
     }
 
     /* ── Üst bar ────────────────────────────────────────────────── */
@@ -503,10 +505,13 @@
       position:fixed; inset:0; z-index:500;
       background:rgba(0,0,0,.6);
       display:flex; align-items:center; justify-content:center;
+      padding: 16px;
       pointer-events:all;
     }
     #it-bubble  {
       width:min(88vw,320px);
+      max-height: 80dvh;
+      overflow-y: auto;
       background:var(--surface); border:1px solid var(--border);
       border-radius:18px; padding:22px 22px 18px;
       box-shadow:0 8px 32px #000a; text-align:center;
@@ -1174,6 +1179,11 @@
       color: var(--accent);
       margin-bottom: 12px;
     }
+    #overlay-next-daily {
+      font-size: 0.88rem;
+      color: var(--text-muted, #94a3b8);
+      margin: -4px 0 12px;
+    }
 
     #overlay-scores {
       background: var(--surface2);
@@ -1229,22 +1239,24 @@
       background: var(--surface);
       border: 2px solid var(--border);
       border-radius: 20px;
-      padding: 36px 40px;
+      padding: 28px 24px 24px;
       max-width: 480px;
+      max-height: 90dvh;
+      overflow-y: auto;
       width: 100%;
       text-align: center;
       position: relative;
     }
 
-    #tut-step-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
+    #tut-step-indicator { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
     .tut-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--surface2); transition: background 0.3s, transform 0.3s; }
     .tut-dot.active { background: var(--accent); transform: scale(1.4); }
-    #tut-icon  { font-size: 3rem; margin-bottom: 12px; display: block; }
-    #tut-title { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
-    #tut-desc  { font-size: 0.92rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+    #tut-icon  { font-size: 2.4rem; margin-bottom: 8px; display: block; }
+    #tut-title { font-size: 1.25rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+    #tut-desc  { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
     #tut-desc strong { color: var(--text); }
 
-    .tut-grid { display: inline-grid; gap: 4px; background: var(--surface2); border-radius: 8px; padding: 8px; margin: 8px auto 20px; }
+    .tut-grid { display: inline-grid; gap: 4px; background: var(--surface2); border-radius: 8px; padding: 8px; margin: 6px auto 12px; }
 
     .tg { width: 36px; height: 36px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; border: 2px solid transparent; }
     .tg-empty   { background: var(--cell-empty);   border-color: var(--cell-border); color: transparent; }
@@ -1714,6 +1726,21 @@
       opacity: 1;
       transform: scale(1);
     }
+    #self-emoji-float {
+      position: fixed;
+      top: 30%;
+      left: 12%;
+      font-size: 3.5rem;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity .25s, transform .25s;
+    }
+    #self-emoji-float.show {
+      opacity: 1;
+      transform: scale(1);
+    }
 
     #coop-turn-bar {
       width: 100%;
@@ -2108,6 +2135,7 @@
       justify-content: safe center;
       padding: 32px 20px 40px;
       overflow-y: auto;
+      overflow-x: hidden;
       animation: ssIn 0.45s cubic-bezier(0.22,1,0.36,1);
     }
     #start-screen.hidden { display: none; }
@@ -2301,7 +2329,7 @@
     #ach-modal         { z-index: var(--z-modal); }
     #global-scores-modal { z-index: var(--z-modal); }
     #global-submit-modal { z-index: var(--z-overlay); }
-    #ad-modal          { z-index: var(--z-overlay); }
+    #ad-modal          { z-index: calc(var(--z-overlay) + 1); }
     #overlay           { z-index: var(--z-overlay); }
     #start-screen      { z-index: var(--z-tutorial); }
     #it-overlay        { z-index: calc(var(--z-tutorial) - 10); }
@@ -2513,6 +2541,7 @@
     <button class="emoji-btn" onclick="sendEmoji('🎉')">🎉</button>
   </div>
   <div id="opponent-emoji-float"></div>
+  <div id="self-emoji-float"></div>
 
   <div id="coop-turn-bar" style="display:none">
     <div id="coop-turn-label">🟢 Sıra Sende!</div>
@@ -2709,6 +2738,7 @@
     <div id="overlay-box">
       <h2 id="overlay-title"></h2>
       <p  id="overlay-msg"></p>
+      <div id="overlay-next-daily" style="display:none"></div>
       <div id="overlay-score-highlight"></div>
       <div id="overlay-rank-row" style="display:none"></div>
       <div id="overlay-xp-gain"></div>
@@ -2870,6 +2900,9 @@
         'stats.losses':         'Kaybetme',
         'stats.draws':          'Beraberlik',
         'stats.winrate':        'Kazanma Oranı',
+        'stats.daily.completions': 'Tamamlama',
+        'stats.daily.streak':      'Mevcut Seri',
+        'stats.daily.best_streak': 'En Uzun Seri',
         'stats.mode.klasik':    'Klasik',
         'stats.mode.surpriz':   'Sürpriz',
         'stats.mode.gunluk':    'Günlük',
@@ -3087,6 +3120,7 @@
         'it.ok':   'Tamam',
         'it.skip': 'Atla',
         'it.done': 'Anladım!',
+        'overlay.btn.home':        '🏠 Ana Menü',
         'overlay.btn.restart':     'Tekrar Oyna',
         'overlay.btn.next.puzzle': 'Sonraki Bulmaca →',
         'overlay.btn.level.select':'📋 Seviye Seç',
@@ -3097,6 +3131,8 @@
         'overlay.btn.time.restart':'🔄 Baştan Oyna',
         'overlay.xp':              '+{xp} XP kazanıldı',
         'overlay.xp.daily':        '+{xp} XP kazanıldı',
+        'overlay.next.daily':      '⏰ Sonraki bulmaca {h} saat {m} dakika sonra',
+        'overlay.next.daily.soon': '⏰ Sonraki bulmaca az sonra!',
         'confirm.clear.scores':    'Tüm skorlar silinsin mi?',
         'share.mode.daily':        '📅 Günlük',
         'share.mode.classic':      '🎮 Klasik',
@@ -3261,6 +3297,9 @@
         'stats.losses':         'Losses',
         'stats.draws':          'Draws',
         'stats.winrate':        'Win Rate',
+        'stats.daily.completions': 'Completions',
+        'stats.daily.streak':      'Current Streak',
+        'stats.daily.best_streak': 'Best Streak',
         'stats.mode.klasik':    'Classic',
         'stats.mode.surpriz':   'Surprise',
         'stats.mode.gunluk':    'Daily',
@@ -3478,6 +3517,7 @@
         'it.ok':   'OK',
         'it.skip': 'Skip',
         'it.done': 'Got it!',
+        'overlay.btn.home':        '🏠 Main Menu',
         'overlay.btn.restart':     'Play Again',
         'overlay.btn.next.puzzle': 'Next Puzzle →',
         'overlay.btn.level.select':'📋 Level Select',
@@ -3488,6 +3528,8 @@
         'overlay.btn.time.restart':'🔄 Play Again',
         'overlay.xp':              '+{xp} XP earned',
         'overlay.xp.daily':        '+{xp} XP earned',
+        'overlay.next.daily':      '⏰ Next puzzle in {h}h {m}m',
+        'overlay.next.daily.soon': '⏰ Next puzzle coming soon!',
         'confirm.clear.scores':    'Delete all scores?',
         'share.mode.daily':        '📅 Daily',
         'share.mode.classic':      '🎮 Classic',
@@ -4663,7 +4705,7 @@
       document.getElementById('btn-tutorial').style.display   = isYaris ? 'none' : '';
       document.getElementById('btn-restart').style.display     = (isYaris && isOnlineRace) ? 'none' : '';
       document.getElementById('btn-online-leave').style.display = (isYaris && isOnlineRace) ? '' : 'none';
-      const focusAllowed = ['serbest','surpriz','gunluk','zaman','bulmaca'].includes(currentMode);
+      const focusAllowed = ['serbest','surpriz','gunluk','zaman','bulmaca','coop'].includes(currentMode);
       document.getElementById('btn-focus').style.display        = focusAllowed ? '' : 'none';
       if (!focusAllowed && focusMode) exitFocusMode();
       updateHintBtnLabel();
@@ -5299,12 +5341,12 @@
     const STATS_MODES = [
       { key: 'serbest',      i18n: 'stats.mode.klasik',       type: 'score'  },
       { key: 'surpriz',      i18n: 'stats.mode.surpriz',      type: 'score'  },
-      { key: 'gunluk',       i18n: 'stats.mode.gunluk',       type: 'score'  },
+      { key: 'gunluk',       i18n: 'stats.mode.gunluk',       type: 'daily'  },
       { key: 'bulmaca',      i18n: 'stats.mode.bulmaca',      type: 'puzzle' },
       { key: 'zaman',        i18n: 'stats.mode.zaman',        type: 'time'   },
       { key: 'yaris_bot',    i18n: 'stats.mode.yaris_bot',    type: 'race'   },
       { key: 'yaris_online', i18n: 'stats.mode.yaris_online', type: 'online' },
-      { key: 'coop_online',  i18n: 'stats.mode.coop',         type: 'online' },
+      { key: 'coop_online',  i18n: 'stats.mode.coop',         type: 'coop'   },
     ];
 
     function loadStats() {
@@ -5328,7 +5370,19 @@
         if (result.won === 'draw') s.draws  = (s.draws  || 0) + 1;
       }
       if (result.completedPuzzle) s.completedPuzzles = (s.completedPuzzles || 0) + 1;
-      if (result.completedLevel)  s.completedLevels  = (s.completedLevels  || 0) + 1;
+      if (result.levelsInRun)     s.completedLevels  = (s.completedLevels  || 0) + result.levelsInRun;
+      if (result.seed !== undefined) {
+        const seed = result.seed;
+        if ((s.lastPlayedSeed || -1) !== seed) {
+          s.lastPlayedSeed = seed;
+        }
+        if (result.completed && (s.lastCompletedSeed || -1) !== seed) {
+          s.completions = (s.completions || 0) + 1;
+          s.streak = (s.lastCompletedSeed || -1) === seed - 1 ? (s.streak || 0) + 1 : 1;
+          s.bestStreak = Math.max(s.bestStreak || 0, s.streak);
+          s.lastCompletedSeed = seed;
+        }
+      }
       localStorage.setItem(STATS_KEY, JSON.stringify(stats));
     }
 
@@ -5367,18 +5421,42 @@
 
       let rows = [`<div class="stats-row"><span>${T('stats.total')}</span><span class="stats-val">${total}</span></div>`];
 
-      if (mode.type === 'score' || mode.type === 'puzzle' || mode.type === 'time') {
+      if (mode.type === 'daily') {
+        const completions = s.completions || 0;
+        const streak      = s.streak      || 0;
+        const bestStreak  = s.bestStreak  || 0;
+        rows = [];
+        rows.push(`<div class="stats-row"><span>${T('stats.daily.completions')}</span><span class="stats-val" style="color:#4ade80">${completions}</span></div>`);
+        rows.push(`<div class="stats-row"><span>${T('stats.daily.streak')}</span><span class="stats-val">${streak > 0 ? streak + ' 🔥' : streak}</span></div>`);
+        rows.push(`<div class="stats-row"><span>${T('stats.daily.best_streak')}</span><span class="stats-val">${bestStreak > 0 ? bestStreak + ' ⭐' : bestStreak}</span></div>`);
+      } else if (mode.type === 'score') {
         if (s.bestScore !== undefined)
           rows.push(`<div class="stats-row"><span>${T('stats.best')}</span><span class="stats-val">${s.bestScore}</span></div>`);
+        if (_statsActiveTab === 'serbest') {
+          const ri = getClassicRankInfo();
+          if (ri) {
+            const g = Math.min(ri.total, 10);
+            rows.push(`<div class="stats-row"><span>${T('stats.avg')}</span><span class="stats-val">${ri.avg}</span></div>`);
+          }
+        } else if (s.scores && s.scores.length) {
+          const last = s.scores.slice(-10);
+          const avg = Math.round(last.reduce((a, b) => a + b, 0) / last.length);
+          rows.push(`<div class="stats-row"><span>${T('stats.avg')}</span><span class="stats-val">${avg}</span></div>`);
+        }
+      } else if (mode.type === 'puzzle') {
+        const completed = s.completedPuzzles || 0;
+        rows.push(`<div class="stats-row"><span>${T('stats.puzzles')}</span><span class="stats-val" style="color:#4ade80">${completed}</span></div>`);
+      } else if (mode.type === 'time') {
+        const levels = s.completedLevels || 0;
+        rows.push(`<div class="stats-row"><span>${T('stats.levels')}</span><span class="stats-val" style="color:var(--accent)">${levels}</span></div>`);
+      } else if (mode.type === 'coop') {
+        if (s.bestScore !== undefined)
+          rows.push(`<div class="stats-row"><span>${T('stats.best')}</span><span class="stats-val" style="color:#4ade80">${s.bestScore}</span></div>`);
         if (s.scores && s.scores.length) {
           const last = s.scores.slice(-10);
           const avg = Math.round(last.reduce((a, b) => a + b, 0) / last.length);
           rows.push(`<div class="stats-row"><span>${T('stats.avg')}</span><span class="stats-val">${avg}</span></div>`);
         }
-        if (s.completedPuzzles !== undefined)
-          rows.push(`<div class="stats-row"><span>${T('stats.puzzles')}</span><span class="stats-val">${s.completedPuzzles}</span></div>`);
-        if (s.completedLevels !== undefined)
-          rows.push(`<div class="stats-row"><span>${T('stats.levels')}</span><span class="stats-val">${s.completedLevels}</span></div>`);
       }
 
       if (mode.type === 'race' || mode.type === 'online') {
@@ -5388,8 +5466,7 @@
         const wr = total ? Math.round((wins / total) * 100) : 0;
         rows.push(`<div class="stats-row"><span>${T('stats.wins')}</span><span class="stats-val" style="color:#4ade80">${wins}</span></div>`);
         rows.push(`<div class="stats-row"><span>${T('stats.losses')}</span><span class="stats-val" style="color:var(--lose-color)">${losses}</span></div>`);
-        if (mode.type === 'online')
-          rows.push(`<div class="stats-row"><span>${T('stats.draws')}</span><span class="stats-val" style="color:var(--text-muted)">${draws}</span></div>`);
+        rows.push(`<div class="stats-row"><span>${T('stats.draws')}</span><span class="stats-val" style="color:var(--text-muted)">${draws}</span></div>`);
         rows.push(`<div class="stats-row"><span>${T('stats.winrate')}</span><span class="stats-val">%${wr}</span></div>`);
       }
 
@@ -5522,6 +5599,17 @@
           document.getElementById('overlay').classList.remove('show');
           initGame();
         });
+      makeBtn('btn-home-overlay', T('overlay.btn.home'),
+        'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
+        () => {
+          document.getElementById('overlay').classList.remove('show');
+          gameHasStarted = false;
+          currentMode = 'serbest';
+          updateModeUI('serbest');
+          const ss = document.getElementById('start-screen');
+          ss.classList.remove('hidden');
+          ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
+        });
     }
 
     // ════════════════════════════════════════════════════════════
@@ -5560,7 +5648,7 @@
             // Tüm bölümler bitti!
             const finalScore   = timeModeScore;
             const savedScores  = saveTimeScore(finalScore, TIME_LEVELS.length);
-            saveGameStat('zaman', { score: finalScore, completedLevel: true });
+            saveGameStat('zaman', { levelsInRun: TIME_LEVELS.length });
             const box = document.getElementById('overlay-box');
             box.className = 'win';
             document.getElementById('overlay-title').textContent   = T('win.time.all');
@@ -5581,7 +5669,7 @@
         soundLose();
         const finalScore   = timeModeScore + (currentNumber - 1);
         const savedScores  = saveTimeScore(finalScore, currentTimeLevelIdx + 1);
-        saveGameStat('zaman', { score: finalScore });
+        saveGameStat('zaman', { levelsInRun: currentTimeLevelIdx });
         const box = document.getElementById('overlay-box');
         box.className = 'lose';
         document.getElementById('overlay-title').textContent   = timeLeft <= 0 ? T('lose.time.up') : T('lose.no.moves');
@@ -5602,8 +5690,10 @@
       const scores    = isMiniGrid ? loadScores() : saveScore(score);
 
       // İstatistik kaydet
-      if (currentMode === 'serbest' || currentMode === 'surpriz' || currentMode === 'gunluk') {
+      if (currentMode === 'serbest' || currentMode === 'surpriz') {
         saveGameStat(currentMode, { score });
+      } else if (currentMode === 'gunluk') {
+        saveGameStat('gunluk', { completed: won, seed: getDailySeed() });
       } else if (currentMode === 'bulmaca') {
         saveGameStat('bulmaca', { score, completedPuzzle: won });
       }
@@ -5684,6 +5774,24 @@
         document.getElementById('overlay-msg').textContent = won
           ? T('win.classic.msg')
           : T('lose.classic.msg', { score });
+      }
+
+      // Günlük mod: sonraki bulmacaya geri sayım
+      const nextDailyEl = document.getElementById('overlay-next-daily');
+      if (nextDailyEl) {
+        if (currentMode === 'gunluk') {
+          const now = new Date();
+          const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+          const msLeft = tomorrow - now;
+          const hLeft = Math.floor(msLeft / 3600000);
+          const mLeft = Math.floor((msLeft % 3600000) / 60000);
+          nextDailyEl.textContent = hLeft < 1
+            ? T('overlay.next.daily.soon')
+            : T('overlay.next.daily', { h: hLeft, m: mLeft });
+          nextDailyEl.style.display = '';
+        } else {
+          nextDailyEl.style.display = 'none';
+        }
       }
 
       if (isMiniGrid || currentMode === 'serbest' || currentMode === 'bulmaca' || currentMode === 'surpriz' || currentMode === 'gunluk') {
@@ -5782,6 +5890,18 @@
         }
       }
 
+      makeBtn('btn-home-overlay', T('overlay.btn.home'),
+        'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
+        () => {
+          document.getElementById('overlay').classList.remove('show');
+          gameHasStarted = false;
+          currentMode = 'serbest';
+          updateModeUI('serbest');
+          const ss = document.getElementById('start-screen');
+          ss.classList.remove('hidden');
+          ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
+        });
+
       document.getElementById('overlay').classList.add('show');
     }
 
@@ -5806,6 +5926,7 @@
     // ════════════════════════════════════════════════════════════
     function undoMove() {
       if (!history.length) return;
+      if (!gameActive) return;
       if (undosUsedThisGame >= FREE_UNDOS_PER_GAME) {
         openAdModal('undo');
         return;
@@ -6212,11 +6333,17 @@
       const fPx   = 'clamp(7px, 1.4vw, 12px)';
       el.style.gridTemplateColumns = `repeat(${RACE_SIZE}, 1fr)`;
       el.style.gap = '2px'; el.style.padding = '4px';
-      el.innerHTML = '';
+      const total = RACE_SIZE * RACE_SIZE;
+      while (el.children.length < total) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        el.appendChild(cell);
+      }
+      while (el.children.length > total) el.removeChild(el.lastChild);
+      let i = 0;
       for (let r = 0; r < RACE_SIZE; r++) {
         for (let c = 0; c < RACE_SIZE; c++) {
-          const cell = document.createElement('div');
-          cell.classList.add('cell');
+          const cell = el.children[i++];
           cell.style.width = cPx; cell.style.height = cPx; cell.style.fontSize = fPx;
           const val = botGrid[r][c];
           if (val > 0) {
@@ -6225,8 +6352,11 @@
               ? 'var(--cell-last)' : 'var(--cell-filled)';
             cell.style.color = (r === botLastR && c === botLastC)
               ? 'var(--cell-last-text)' : 'var(--cell-filled-text)';
+          } else {
+            cell.textContent = '';
+            cell.style.background = '';
+            cell.style.color = '';
           }
-          el.appendChild(cell);
         }
       }
       document.getElementById('race-bot-score').textContent = botNumber - 1;
@@ -6568,9 +6698,25 @@
       }, 2000);
     }
 
+    let _selfEmojiFloatTimeout = null;
+    function showSelfEmoji(emoji) {
+      const el = document.getElementById('self-emoji-float');
+      if (!el) return;
+      el.textContent = emoji;
+      el.classList.remove('show');
+      void el.offsetWidth;
+      el.classList.add('show');
+      if (_selfEmojiFloatTimeout) clearTimeout(_selfEmojiFloatTimeout);
+      _selfEmojiFloatTimeout = setTimeout(() => {
+        el.classList.remove('show');
+        _selfEmojiFloatTimeout = null;
+      }, 2000);
+    }
+
     function sendEmoji(emoji) {
       if (!onlineSocket || onlineSocket.readyState !== WebSocket.OPEN) return;
       onlineSocket.send(JSON.stringify({ type: 'emoji', emoji }));
+      showSelfEmoji(emoji);
     }
 
     function showOnlineResult(myScore, oppScore, winner, disconnected) {
@@ -6961,7 +7107,7 @@
         document.getElementById('coop-turn-bar').style.display = 'none';
         currentMode = 'serbest';
         gameActive = true;
-        updateModeUI('serbest');
+        updateHintBtnVisibility();
         updateUndoBtn();
         updateComboDisplay();
         document.getElementById('hint').textContent = T('hint.default');
@@ -7820,6 +7966,11 @@
 
     function openAdModal(target = 'hint') {
       adRewardTarget = target;
+      if (target === 'undo' || target === 'race_undo') {
+        const ov = document.getElementById('overlay');
+        ov.classList.remove('show');
+        ov.style.display = 'none';
+      }
       if (target === 'time' && timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -7902,7 +8053,6 @@
         updateTimerDisplay();
         updateTimeBoostBtn();
       } else if (adRewardTarget === 'undo') {
-        document.getElementById('overlay').classList.remove('show');
         undosUsedThisGame = Math.max(0, undosUsedThisGame - 1);
         updateUndoBtn();
         undoMove();
@@ -7935,7 +8085,16 @@
     document.getElementById('btn-ad-watch').addEventListener('click', () => {
       if (!showRealAd(onAdReward, startSimulatedAd)) startSimulatedAd();
     });
-    document.getElementById('btn-ad-cancel').addEventListener('click', closeAdModal);
+    document.getElementById('btn-ad-cancel').addEventListener('click', () => {
+      if (adRewardTarget === 'undo') {
+        closeAdModal();
+        const ov = document.getElementById('overlay');
+        ov.style.display = '';
+        ov.classList.add('show');
+      } else {
+        closeAdModal();
+      }
+    });
 
     document.getElementById('btn-time-boost').addEventListener('click', () => {
       if (!gameActive) return;
