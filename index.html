@@ -6991,7 +6991,12 @@
           if (_coopPrivateMode) {
             // Eşli Mod özel odası — kodu coop-select içinde göster
             const cb = document.getElementById('btn-cs-create');
-            if (cb) { cb.disabled = true; cb.textContent = '⏳ Partner bekleniyor...'; }
+            if (cb) {
+              const total = data.playerCount || coopPlayerCount || 2;
+              const joined = data.joined || 1;
+              cb.disabled = true;
+              cb.textContent = total === 4 ? `⏳ Oyuncu bekleniyor (${joined}/${total})` : '⏳ Partner bekleniyor...';
+            }
             document.getElementById('cs-code-val').textContent = data.code;
             document.getElementById('cs-code-display').style.display = 'block';
           } else {
@@ -7161,6 +7166,20 @@
 
         case 'coopWaiting':
           break;
+
+        case 'coopPrivateWaiting': {
+          if (!_coopPrivateMode) break;
+          const cb = document.getElementById('btn-cs-create');
+          const total = data.playerCount || coopPlayerCount || 4;
+          const joined = data.joined || 1;
+          if (cb) {
+            cb.disabled = true;
+            cb.textContent = `⏳ Oyuncu bekleniyor (${joined}/${total})`;
+          }
+          document.getElementById('cs-code-val').textContent = data.code || document.getElementById('cs-code-val').textContent;
+          document.getElementById('cs-code-display').style.display = 'block';
+          break;
+        }
 
         case 'coopMatched':
           isCoopMode = true;
@@ -7572,7 +7591,7 @@
       const privateSection = document.getElementById('cs-private-section');
       const startBtn = document.getElementById('btn-cs-start');
       nick.style.display = isOnline ? '' : 'none';
-      privateSection.style.display = isOnline && coopPlayerCount === 2 ? 'flex' : 'none';
+      privateSection.style.display = isOnline ? 'flex' : 'none';
       startBtn.textContent = isOnline
         ? (coopPlayerCount === 4 ? '👥 4 Kişilik Online' : '🔍 Hızlı Eşleş')
         : (coopPlayerCount === 4 ? T('coop.btn.bot4') : T('coop.btn.bot2'));
@@ -7622,7 +7641,7 @@
       const myRank = myRankInfo ? { icon: myRankInfo.tier.icon, name: T(myRankInfo.tier.nameKey) } : null;
       if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); }
       onlineSocket = new WebSocket(WS_URL);
-      onlineSocket.onopen = () => onlineSocket.send(JSON.stringify({ type: 'createPrivate', nickname: nick, rank: myRank, mode: 'coop' }));
+      onlineSocket.onopen = () => onlineSocket.send(JSON.stringify({ type: 'createPrivate', nickname: nick, rank: myRank, mode: 'coop', playerCount: coopPlayerCount }));
       onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
       onlineSocket.onerror = () => {
         _coopPrivateMode = false;
