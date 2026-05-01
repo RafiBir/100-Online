@@ -7396,10 +7396,12 @@
       isBlockMode = true;
       const myRankInfo = getClassicRankInfo();
       const myRank = myRankInfo ? { icon: myRankInfo.tier.icon, name: T(myRankInfo.tier.nameKey) } : null;
-      document.getElementById('online-nick-section').style.display = 'none';
-      document.getElementById('online-waiting-title').textContent = T('block.waiting.title');
-      document.getElementById('online-waiting-sub').textContent = T('block.waiting.sub');
-      document.getElementById('online-waiting-anim').textContent = '🧱'; openOnlineWaiting();
+      if (privateMsg?.type !== 'createPrivate') {
+        document.getElementById('online-nick-section').style.display = 'none';
+        document.getElementById('online-waiting-title').textContent = T('block.waiting.title');
+        document.getElementById('online-waiting-sub').textContent = T('block.waiting.sub');
+        document.getElementById('online-waiting-anim').textContent = '🧱'; openOnlineWaiting();
+      }
       if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); }
       onlineSocket = new WebSocket(_RACE_WS);
       onlineSocket.onopen = () => onlineSocket.send(JSON.stringify(privateMsg ? { ...privateMsg, nickname, rank: myRank, mode: 'block', playerCount: blockPlayerCount } : { type: 'blockJoin', nickname, rank: myRank, playerCount: blockPlayerCount }));
