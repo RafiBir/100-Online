@@ -5005,6 +5005,7 @@
     }
 
     function startBlockBotMode(nickname) {
+      if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); onlineSocket = null; }
       closeOnlineWaiting();
       currentMode = 'bloke';
       isBlockMode = true;
@@ -7215,7 +7216,7 @@
       onlineSocket.onopen = () => onlineSocket.send(JSON.stringify(privateMsg ? { ...privateMsg, nickname, rank: myRank, mode: 'block', playerCount: blockPlayerCount } : { type: 'blockJoin', nickname, rank: myRank, playerCount: blockPlayerCount }));
       onlineSocket.onmessage = (evt) => { try { handleOnlineMessage(JSON.parse(evt.data)); } catch {} };
       onlineSocket.onerror = () => { closeBlockSocket(); closeOnlineWaiting(); showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' }); };
-      onlineSocket.onclose = () => { if (isBlockMode && !document.getElementById('overlay').classList.contains('show')) showBlockResult({ winner: 'you', winnerName: localStorage.getItem('nickname_100oyunu') || 'SEN', reason: 'disconnect', players: blockPlayers, board: grid }); };
+      onlineSocket.onclose = () => { if (isBlockMode && !blockVsBot && !document.getElementById('overlay').classList.contains('show')) showBlockResult({ winner: 'you', winnerName: localStorage.getItem('nickname_100oyunu') || 'SEN', reason: 'disconnect', players: blockPlayers, board: grid }); };
     }
 
     function showOnlineNickSection(tab = 'quick') {
@@ -8543,6 +8544,7 @@
   </script>
 </body>
 </html>
+
 
 
 
