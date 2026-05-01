@@ -5926,7 +5926,6 @@
     // ════════════════════════════════════════════════════════════
     function undoMove() {
       if (!history.length) return;
-      if (!gameActive) return;
       if (undosUsedThisGame >= FREE_UNDOS_PER_GAME) {
         openAdModal('undo');
         return;
@@ -6230,7 +6229,7 @@
     }
 
     document.getElementById('btn-restart').addEventListener('click', restartGame);
-    document.getElementById('btn-undo').addEventListener('click', undoMove);
+    document.getElementById('btn-undo').addEventListener('click', () => { if (gameActive) undoMove(); });
     document.getElementById('it-confirm').addEventListener('click', confirmITStep);
     document.getElementById('it-skip').addEventListener('click', closeIT);
 
