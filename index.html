@@ -2524,7 +2524,7 @@
   </div>
   <div id="race-score-bar" style="display:none">
     <div class="race-score-side"><span id="race-player-score">0</span><span>/36</span></div>
-    <div class="race-vs"><span id="race-timer">90</span><span style="font-size:0.65rem;display:block;color:var(--text-muted)" data-i18n="race.sec">sn</span></div>
+    <div class="race-vs"><span id="race-timer">45</span><span style="font-size:0.65rem;display:block;color:var(--text-muted)" data-i18n="race.sec">sn</span></div>
     <div class="race-score-side bot"><span id="race-bot-score">0</span><span>/36</span></div>
   </div>
   <div id="race-undo-bar" style="display:none">
@@ -3845,7 +3845,7 @@
     let botGameOver = false, playerGameOver = false;
     let botInterval = null;
     let raceTimerInterval = null;
-    let raceTimeLeft = 90;
+    let raceTimeLeft = 45;
     let raceDifficulty = 'kolay'; // 'kolay' | 'orta' | 'zor'
     let isOnlineRace = false;
     let onlineSocket = null;
@@ -4630,8 +4630,8 @@
         document.getElementById('race-bot-score').textContent = '0';
         if (botInterval) clearInterval(botInterval);
         if (raceTimerInterval) clearInterval(raceTimerInterval);
-        raceTimeLeft = 90;
-        document.getElementById('race-timer').textContent = '90';
+        raceTimeLeft = 45;
+        document.getElementById('race-timer').textContent = '45';
         document.getElementById('race-timer').parentElement.classList.remove('urgent');
         if (!isOnlineRace) {
           const botSpeed = raceDifficulty === 'kolay' ? 1100 : raceDifficulty === 'orta' ? 680 : 270;
