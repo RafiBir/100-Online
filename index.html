@@ -2843,7 +2843,7 @@
         <button id="btn-cs-close">✕</button>
       </div>
       <p id="cs-subtitle">10×10 grid'de partner ile oyna — sen tek, o çift sayıları yerleştir!</p>
-      <button id="btn-cs-bot" style="background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border:none;border-radius:12px;padding:12px 0;font-size:1rem;font-weight:700;cursor:pointer;width:100%">🤖 Bota Karşı Oyna</button>
+      <button id="btn-cs-bot" style="background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border:none;border-radius:12px;padding:12px 0;font-size:1rem;font-weight:700;cursor:pointer;width:100%">🤖 Bot ile Oyna</button>
       <hr class="rls-sep">
       <div style="font-size:0.78rem;color:var(--text-muted);text-align:center;margin:-6px 0 4px">— veya online —</div>
       <input id="coop-nick-inp" type="text" maxlength="20" autocomplete="off" placeholder="Kullanıcı adı">
@@ -3253,7 +3253,7 @@
         'mode.coop':               'Eşli Mod',
         'mode.coop.desc':          '2 oyuncu, 1 grid: tek-çift sayıları sıraya diz!',
         'coop.btn.connect':        '🤝 Partner Bul',
-        'coop.btn.bot':            '🤖 Bota Karşı Oyna',
+        'coop.btn.bot':            '🤖 Bot ile Oyna',
         'coop.bot.partner':        '🤖 Bot',
         'coop.new.bot.game':       '🤖 Tekrar Oyna',
         'coop.waiting.title':      'Partner Aranıyor...',
@@ -3682,7 +3682,7 @@
         'mode.coop':               'Paired Mode',
         'mode.coop.desc':          '2 players, 1 grid: place odd & even numbers in order!',
         'coop.btn.connect':        '🤝 Find Partner',
-        'coop.btn.bot':            '🤖 Play vs Bot',
+        'coop.btn.bot':            '🤖 Play with Bot',
         'coop.bot.partner':        '🤖 Bot',
         'coop.new.bot.game':       '🤖 Play Again',
         'coop.waiting.title':      'Finding Partner...',
@@ -7564,44 +7564,68 @@
       initGame();
     }
 
-    function botCoopTick() {
-      if (!isCoopMode || !isCoopBotMode) return;
-      // Collect valid moves for current number
-      const validMoves = [];
+    // Raw valid-move list without gameActive/puzzle/surpriz checks — for bot lookahead only
+    function _coopMoves(fromR, fromC, num) {
+      const moves = [];
       for (let r = 0; r < activeRows; r++) {
         for (let c = 0; c < activeCols; c++) {
           if (grid[r][c] !== 0) continue;
-          if (currentNumber === 1) { validMoves.push({r, c}); continue; }
-          const dr = Math.abs(r - lastR), dc = Math.abs(c - lastC);
-          const isHV = (dr === 0 && dc === 3) || (dc === 0 && dr === 3);
-          const isDiag = dr === dc && dr === 2;
-          if (isHV || isDiag) validMoves.push({r, c});
+          if (num <= 1) { moves.push({r, c}); continue; }
+          const dr = Math.abs(r - fromR), dc = Math.abs(c - fromC);
+          if ((dr === 0 && dc === 3) || (dc === 0 && dr === 3) || (dr === dc && dr === 2))
+            moves.push({r, c});
         }
       }
-      if (!validMoves.length) {
+      return moves;
+    }
+
+    function botCoopTick() {
+      if (!isCoopMode || !isCoopBotMode) return;
+      const total = activeRows * activeCols;
+      const botNum = currentNumber;
+      const botMoves = _coopMoves(lastR, lastC, botNum);
+
+      if (!botMoves.length) {
         isCoopMode = false; isCoopBotMode = false;
-        showCoopResult(currentNumber - 1, 'stuck', true);
+        showCoopResult(botNum - 1, 'stuck', true);
         return;
       }
-      // 1-step lookahead: pick cell that opens most future moves
-      let best = validMoves[0], bestScore = -1;
-      for (const mv of validMoves) {
-        grid[mv.r][mv.c] = currentNumber;
-        const nR = mv.r, nC = mv.c, nNum = currentNumber + 1;
-        let score = 0;
-        for (let r = 0; r < activeRows; r++) {
-          for (let c = 0; c < activeCols; c++) {
-            if (grid[r][c] !== 0) continue;
-            const dr = Math.abs(r - nR), dc = Math.abs(c - nC);
-            if ((dr === 0 && dc === 3) || (dc === 0 && dr === 3) || (dr === dc && dr === 2)) score++;
-          }
+
+      // Warnsdorff + 2-step lookahead:
+      // Primary:   count player moves from bot's cell (minimize — Warnsdorff)
+      // Secondary: among those player moves, find min bot-moves-after (minimize — Warnsdorff 2nd step)
+      // This pushes the path toward constrained cells before they get stranded.
+      let best = null, bestPri = Infinity, bestSec = Infinity;
+
+      for (const bm of botMoves) {
+        if (botNum >= total) { best = bm; break; } // last cell — take it
+        grid[bm.r][bm.c] = botNum;
+        const playerMoves = _coopMoves(bm.r, bm.c, botNum + 1);
+        const pri = playerMoves.length;
+
+        if (pri === 0) { grid[bm.r][bm.c] = 0; continue; } // strands player — skip
+
+        // Secondary: minimum bot-moves available after each player response
+        let minSec = Infinity;
+        for (const pm of playerMoves) {
+          grid[pm.r][pm.c] = botNum + 1;
+          const sec = (botNum + 2 > total) ? 0 : _coopMoves(pm.r, pm.c, botNum + 2).length;
+          if (sec < minSec) minSec = sec;
+          grid[pm.r][pm.c] = 0;
         }
-        grid[mv.r][mv.c] = 0;
-        if (score > bestScore) { bestScore = score; best = mv; }
+        grid[bm.r][bm.c] = 0;
+
+        if (pri < bestPri || (pri === bestPri && minSec < bestSec)) {
+          bestPri = pri; bestSec = minSec; best = bm;
+        }
       }
+
+      // Fallback: if every bot move strands the player, just pick any
+      if (!best) best = botMoves[0];
+
       const {r, c} = best;
-      soundPlace(currentNumber);
-      grid[r][c] = currentNumber;
+      soundPlace(botNum);
+      grid[r][c] = botNum;
       coopPartnerCells.add(`${r},${c}`);
       coopPartnerLastR = r; coopPartnerLastC = c;
       lastR = r; lastC = c;
@@ -7610,12 +7634,11 @@
       const allCells = document.querySelectorAll('.cell');
       const placedCell = allCells[r * activeCols + c];
       if (placedCell) { placedCell.classList.add('pop-anim'); placedCell.addEventListener('animationend', () => placedCell.classList.remove('pop-anim'), { once: true }); }
-      if (currentNumber > activeRows * activeCols) {
+      if (currentNumber > total) {
         isCoopMode = false; isCoopBotMode = false;
         showCoopResult(currentNumber - 1, 'complete', true);
         return;
       }
-      // Hand turn to player
       coopIsMyTurn = true;
       gameActive = true;
       document.getElementById('num-display').textContent = currentNumber;
