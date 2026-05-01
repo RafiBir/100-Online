@@ -2858,8 +2858,8 @@
       <div id="online-nick-section">
         <!-- Sekme butonları -->
         <div id="online-mode-tabs" style="display:flex;gap:6px;width:100%;margin-bottom:4px">
-          <button id="tab-quick" class="online-tab active" onclick="switchOnlineTab('quick')" style="flex:1">🔍 Hızlı Eşleş</button>
-          <button id="tab-private" class="online-tab" onclick="switchOnlineTab('private')" style="flex:1">🔑 Özel Oda</button>
+          <button id="tab-quick" class="online-tab active" onclick="switchOnlineTab('quick')" style="flex:1" data-i18n="online.quick">🔍 Hızlı Eşleş</button>
+          <button id="tab-private" class="online-tab" onclick="switchOnlineTab('private')" style="flex:1" data-i18n="online.private">🔑 Özel Oda</button>
         </div>
         <input id="online-nick-inp" type="text" maxlength="20" autocomplete="off">
         <!-- Hızlı eşleş alanı -->
@@ -2868,17 +2868,17 @@
         </div>
         <!-- Özel oda alanı -->
         <div id="online-tab-private" style="display:none;flex-direction:column;gap:8px;width:100%">
-          <button id="btn-create-private" style="width:100%;padding:10px;border-radius:8px;background:#7c3aed;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.9rem">🏠 Oda Oluştur</button>
-          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem">— veya —</div>
+          <button id="btn-create-private" style="width:100%;padding:10px;border-radius:8px;background:#7c3aed;color:#fff;border:none;font-weight:700;cursor:pointer;font-size:0.9rem" data-i18n="online.create.room">🏠 Oda Oluştur</button>
+          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem" data-i18n="online.or">— veya —</div>
           <div style="display:flex;gap:6px">
-            <input id="private-code-inp" type="text" maxlength="6" placeholder="Oda Kodu" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center" autocomplete="off">
-            <button id="btn-join-private" style="padding:8px 14px;border-radius:8px;background:#2563eb;color:#fff;border:none;font-weight:700;cursor:pointer">Katıl</button>
+            <input id="private-code-inp" type="text" maxlength="6" placeholder="Oda Kodu" data-i18n="online.room.code" data-i18n-attr="placeholder" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:0.9rem;text-transform:uppercase;letter-spacing:2px;text-align:center" autocomplete="off">
+            <button id="btn-join-private" style="padding:8px 14px;border-radius:8px;background:#2563eb;color:#fff;border:none;font-weight:700;cursor:pointer" data-i18n="online.join">Katıl</button>
           </div>
           <!-- Oluşturulan oda kodu göstergesi -->
           <div id="private-code-display" style="display:none;text-align:center;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;padding:10px">
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px">Arkadaşına bu kodu gönder:</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px" data-i18n="online.share.code">Arkadaşına bu kodu gönder:</div>
             <div id="private-code-val" style="font-size:1.8rem;font-weight:900;letter-spacing:4px;color:var(--accent)"></div>
-            <button id="btn-copy-code" style="margin-top:6px;padding:4px 14px;border-radius:6px;background:var(--accent-dim);color:#fff;border:none;cursor:pointer;font-size:0.78rem">📋 Kopyala</button>
+            <button id="btn-copy-code" style="margin-top:6px;padding:4px 14px;border-radius:6px;background:var(--accent-dim);color:#fff;border:none;cursor:pointer;font-size:0.78rem" data-i18n="online.copy">📋 Kopyala</button>
           </div>
         </div>
       </div>
@@ -2890,36 +2890,36 @@
   <div id="coop-select">
     <div id="cs-box">
       <div id="cs-header">
-        <h2>🤝 Eşli Mod</h2>
+        <h2 data-i18n="coop.menu.title">🤝 Eşli Mod</h2>
         <button id="btn-cs-close">✕</button>
       </div>
-      <p id="cs-subtitle">10×10 grid'de partner ile oyna — sen tek, o çift sayıları yerleştir!</p>
+      <p id="cs-subtitle" data-i18n="coop.menu.subtitle">10×10 grid'de partner ile oyna — sen tek, o çift sayıları yerleştir!</p>
       <div id="coop-player-count">
-        <button type="button" data-count="2">2 Kişi</button>
-        <button type="button" data-count="4">4 Kişi</button>
+        <button type="button" data-count="2" data-i18n="menu.players.2">2 Kişi</button>
+        <button type="button" data-count="4" data-i18n="menu.players.4">4 Kişi</button>
       </div>
       <div id="coop-match-type">
-        <button type="button" data-type="online">Online</button>
-        <button type="button" data-type="bot">Bota Karşı</button>
+        <button type="button" data-type="online" data-i18n="block.match.online">Online</button>
+        <button type="button" data-type="bot" data-i18n="block.match.bot">Bota Karşı</button>
       </div>
-      <input id="coop-nick-inp" type="text" maxlength="20" autocomplete="off" placeholder="Kullanıcı adı">
-      <button id="btn-cs-start">🔍 Hızlı Eşleş</button>
+      <input id="coop-nick-inp" type="text" maxlength="20" autocomplete="off" placeholder="Kullanıcı adı" data-i18n="online.nick.label" data-i18n-attr="placeholder">
+      <button id="btn-cs-start" data-i18n="online.quick">🔍 Hızlı Eşleş</button>
       <hr class="rls-sep">
       <div id="cs-private-section">
-        <div id="cs-private-label">🔑 Özel Oda</div>
-        <button id="btn-cs-create">🏠 Oda Oluştur</button>
+        <div id="cs-private-label" data-i18n="online.private">🔑 Özel Oda</div>
+        <button id="btn-cs-create" data-i18n="online.create.room">🏠 Oda Oluştur</button>
         <div id="cs-code-display">
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px">Arkadaşına bu kodu gönder:</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:4px" data-i18n="online.share.code">Arkadaşına bu kodu gönder:</div>
           <div id="cs-code-val"></div>
-          <button id="btn-cs-copy" style="margin-top:6px;padding:4px 14px;border-radius:6px;background:var(--accent-dim);color:#fff;border:none;cursor:pointer;font-size:0.78rem">📋 Kopyala</button>
+          <button id="btn-cs-copy" style="margin-top:6px;padding:4px 14px;border-radius:6px;background:var(--accent-dim);color:#fff;border:none;cursor:pointer;font-size:0.78rem" data-i18n="online.copy">📋 Kopyala</button>
         </div>
-        <div id="cs-or">— veya —</div>
+        <div id="cs-or" data-i18n="online.or">— veya —</div>
         <div id="cs-join-row">
-          <input id="coop-code-inp" type="text" maxlength="6" placeholder="Oda Kodu" autocomplete="off">
-          <button id="btn-cs-join">Katıl</button>
+          <input id="coop-code-inp" type="text" maxlength="6" placeholder="Oda Kodu" data-i18n="online.room.code" data-i18n-attr="placeholder" autocomplete="off">
+          <button id="btn-cs-join" data-i18n="online.join">Katıl</button>
         </div>
       </div>
-      <button id="btn-cs-cancel" style="background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);border-radius:10px;padding:8px 20px;cursor:pointer;font-size:0.85rem;align-self:center">İptal</button>
+      <button id="btn-cs-cancel" style="background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);border-radius:10px;padding:8px 20px;cursor:pointer;font-size:0.85rem;align-self:center" data-i18n="online.waiting.cancel">İptal</button>
     </div>
   </div>
 
@@ -3283,6 +3283,21 @@
         'online.waiting.title':    'Rakip Aranıyor...',
         'online.waiting.sub':      'Seni bekleyen birini arıyoruz',
         'online.waiting.cancel':   'İptal',
+        'online.quick':            '🔍 Hızlı Eşleş',
+        'online.private':          '🔑 Özel Oda',
+        'online.create.room':      '🏠 Oda Oluştur',
+        'online.join':             'Katıl',
+        'online.or':               '— veya —',
+        'online.room.code':        'Oda Kodu',
+        'online.share.code':       'Arkadaşına bu kodu gönder:',
+        'online.copy':             '📋 Kopyala',
+        'online.copied':           '✅ Kopyalandı',
+        'online.connecting':       '⏳ Bağlanıyor...',
+        'online.connect.retry':    'Sunucuya bağlanılamadı. Tekrar dene.',
+        'online.waiting.friend':   '⏳ Arkadaş bekleniyor...',
+        'online.waiting.partner':  '⏳ Partner bekleniyor...',
+        'online.waiting.players':  '⏳ Oyuncu bekleniyor ({joined}/{total})',
+        'online.room.notfound':    'Oda bulunamadı. Kodu kontrol et.',
         'online.connect.btn':      '🔍 Ara',
         'online.nick.label':       'Kullanıcı adı',
         'online.nick.sub':         'Yarışmak için kullanıcı adı gir',
@@ -3308,6 +3323,10 @@
         'mode.bloke.desc':         'Aynı tahtada rakibini sıkıştır, son kalan kazanır!',
         'mode.coop':               'Eşli Mod',
         'mode.coop.desc':          '2 oyuncu, 1 grid: tek-çift sayıları sıraya diz!',
+        'menu.players.2':          '2 Kişi',
+        'menu.players.4':          '4 Kişi',
+        'coop.menu.title':         '🤝 Eşli Mod',
+        'coop.menu.subtitle':      "10×10 grid'de partner ile oyna — sen tek, o çift sayıları yerleştir!",
         'coop.btn.connect':        '🤝 Partner Bul',
         'coop.btn.bot':            '🤖 Bot ile Oyna',
         'coop.btn.bot2':           '🤖 Bot ile Oyna (2 Kişi)',
@@ -3717,6 +3736,21 @@
         'online.waiting.title':    'Looking for Opponent...',
         'online.waiting.sub':      'Searching for someone to race',
         'online.waiting.cancel':   'Cancel',
+        'online.quick':            '🔍 Quick Match',
+        'online.private':          '🔑 Private Room',
+        'online.create.room':      '🏠 Create Room',
+        'online.join':             'Join',
+        'online.or':               '— or —',
+        'online.room.code':        'Room Code',
+        'online.share.code':       'Send this code to your friend:',
+        'online.copy':             '📋 Copy',
+        'online.copied':           '✅ Copied',
+        'online.connecting':       '⏳ Connecting...',
+        'online.connect.retry':    'Could not connect to the server. Try again.',
+        'online.waiting.friend':   '⏳ Waiting for friend...',
+        'online.waiting.partner':  '⏳ Waiting for partner...',
+        'online.waiting.players':  '⏳ Waiting for players ({joined}/{total})',
+        'online.room.notfound':    'Room not found. Check the code.',
         'online.connect.btn':      '🔍 Search',
         'online.nick.label':       'Nickname',
         'online.nick.sub':         'Enter a nickname to start racing',
@@ -3742,6 +3776,10 @@
         'mode.bloke.desc':         'Trap your opponent on one shared board; last player wins!',
         'mode.coop':               'Paired Mode',
         'mode.coop.desc':          '2 players, 1 grid: place odd & even numbers in order!',
+        'menu.players.2':          '2 Players',
+        'menu.players.4':          '4 Players',
+        'coop.menu.title':         '🤝 Paired Mode',
+        'coop.menu.subtitle':      'Play on a 10×10 grid with a partner — place odd and even numbers in order!',
         'coop.btn.connect':        '🤝 Find Partner',
         'coop.btn.bot':            '🤖 Play with Bot',
         'coop.btn.bot2':           '🤖 Play with Bot (2 Players)',
@@ -3846,6 +3884,8 @@
       if (itMode && itStep > 0 && itPhase === 'read') showITStep(itStep);
       const modeLabel = document.getElementById('mode-select-label');
       if (modeLabel) modeLabel.textContent = T('mode.' + (currentMode === 'serbest' ? 'klasik' : currentMode));
+      updateBlockMenuLabels();
+      updateCoopMenuUI();
       updateRankBadge();
     }
 
@@ -6908,9 +6948,9 @@
       document.getElementById('private-code-val').textContent = '';
       document.getElementById('private-code-inp').value = '';
       const createBtn = document.getElementById('btn-create-private');
-      if (createBtn) { createBtn.disabled = false; createBtn.textContent = '🏠 Oda Oluştur'; }
+      if (createBtn) { createBtn.disabled = false; createBtn.textContent = T('online.create.room'); }
       const joinBtn = document.getElementById('btn-join-private');
-      if (joinBtn) { joinBtn.disabled = false; joinBtn.textContent = 'Katıl'; }
+      if (joinBtn) { joinBtn.disabled = false; joinBtn.textContent = T('online.join'); }
       const coopBtn = document.getElementById('btn-coop-connect');
       if (coopBtn) { coopBtn.disabled = false; coopBtn.textContent = T('coop.btn.connect'); }
       switchOnlineTab('quick');
@@ -6995,14 +7035,14 @@
               const total = data.playerCount || coopPlayerCount || 2;
               const joined = data.joined || 1;
               cb.disabled = true;
-              cb.textContent = total === 4 ? `⏳ Oyuncu bekleniyor (${joined}/${total})` : '⏳ Partner bekleniyor...';
+              cb.textContent = total === 4 ? T('online.waiting.players', { joined, total }) : T('online.waiting.partner');
             }
             document.getElementById('cs-code-val').textContent = data.code;
             document.getElementById('cs-code-display').style.display = 'block';
           } else {
             const btn = document.getElementById('btn-create-private');
             btn.disabled    = true;
-            btn.textContent = '⏳ Arkadaş bekleniyor...';
+            btn.textContent = T('online.waiting.friend');
             document.getElementById('private-code-val').textContent    = data.code;
             document.getElementById('private-code-display').style.display = '';
             switchOnlineTab('private');
@@ -7015,16 +7055,16 @@
           if (_coopPrivateMode) {
             _coopPrivateMode = false;
             const cjb = document.getElementById('btn-cs-join');
-            if (cjb) { cjb.disabled = false; cjb.textContent = 'Katıl'; }
+            if (cjb) { cjb.disabled = false; cjb.textContent = T('online.join'); }
             const ci = document.getElementById('coop-code-inp');
             if (ci) { ci.style.borderColor = '#ef4444'; setTimeout(() => { ci.style.borderColor = ''; }, 2000); }
           } else {
             const joinBtn = document.getElementById('btn-join-private');
-            joinBtn.disabled = false; joinBtn.textContent = 'Katıl';
+            joinBtn.disabled = false; joinBtn.textContent = T('online.join');
             document.getElementById('private-code-inp').style.borderColor = '#ef4444';
             setTimeout(() => { document.getElementById('private-code-inp').style.borderColor = ''; }, 2000);
           }
-          showToast({ icon: '❌', name: 'Oda bulunamadı. Kodu kontrol et.', xp: 0, type: 'error' });
+          showToast({ icon: '❌', name: T('online.room.notfound'), xp: 0, type: 'error' });
           break;
         }
 
@@ -7174,7 +7214,7 @@
           const joined = data.joined || 1;
           if (cb) {
             cb.disabled = true;
-            cb.textContent = `⏳ Oyuncu bekleniyor (${joined}/${total})`;
+            cb.textContent = T('online.waiting.players', { joined, total });
           }
           document.getElementById('cs-code-val').textContent = data.code || document.getElementById('cs-code-val').textContent;
           document.getElementById('cs-code-display').style.display = 'block';
@@ -7429,13 +7469,30 @@
       // Socket AÇIK kalıyor, rematch için
     }
 
+    function updateBlockMenuLabels() {
+      const picker = document.getElementById('block-player-count');
+      if (picker) {
+        const b2 = picker.querySelector('[data-count="2"]');
+        const b4 = picker.querySelector('[data-count="4"]');
+        if (b2) b2.textContent = T('menu.players.2');
+        if (b4) b4.textContent = T('menu.players.4');
+      }
+      const typePicker = document.getElementById('block-match-type');
+      if (typePicker) {
+        const online = typePicker.querySelector('[data-type="online"]');
+        const bot = typePicker.querySelector('[data-type="bot"]');
+        if (online) online.textContent = T('block.match.online');
+        if (bot) bot.textContent = T('block.match.bot');
+      }
+    }
+
     function ensureBlockPlayerCountPicker() {
       const nickSec = document.getElementById('online-nick-section');
       let picker = document.getElementById('block-player-count');
       if (!picker) {
         picker = document.createElement('div');
         picker.id = 'block-player-count';
-        picker.innerHTML = '<button type="button" data-count="2">2 Kişi</button><button type="button" data-count="4">4 Kişi</button>';
+        picker.innerHTML = '<button type="button" data-count="2"></button><button type="button" data-count="4"></button>';
         nickSec.insertBefore(picker, nickSec.firstChild);
         picker.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
           blockPlayerCount = Number(btn.dataset.count) === 4 ? 4 : 2;
@@ -7449,7 +7506,7 @@
       if (!typePicker) {
         typePicker = document.createElement('div');
         typePicker.id = 'block-match-type';
-        typePicker.innerHTML = '<button type="button" data-type="online">Online</button><button type="button" data-type="bot">Bota Karşı</button>';
+        typePicker.innerHTML = '<button type="button" data-type="online"></button><button type="button" data-type="bot"></button>';
         nickSec.insertBefore(typePicker, picker.nextSibling);
         typePicker.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
           blockMatchType = btn.dataset.type === 'bot' ? 'bot' : 'online';
@@ -7462,6 +7519,7 @@
       typePicker.style.display = 'flex';
       typePicker.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.type === blockMatchType));
       document.getElementById('online-mode-tabs').style.display = blockMatchType === 'bot' ? 'none' : 'flex';
+      updateBlockMenuLabels();
     }
 
     function showBlockNickSection(tab = 'quick') {
@@ -7565,9 +7623,9 @@
       document.getElementById('cs-code-display').style.display = 'none';
       document.getElementById('cs-code-val').textContent = '';
       const cb = document.getElementById('btn-cs-create');
-      if (cb) { cb.disabled = false; cb.textContent = '🏠 Oda Oluştur'; }
+      if (cb) { cb.disabled = false; cb.textContent = T('online.create.room'); }
       const jb = document.getElementById('btn-cs-join');
-      if (jb) { jb.disabled = false; jb.textContent = 'Katıl'; }
+      if (jb) { jb.disabled = false; jb.textContent = T('online.join'); }
       document.getElementById('coop-code-inp').value = '';
       updateCoopMenuUI();
       document.getElementById('coop-select').classList.add('show');
@@ -7593,7 +7651,7 @@
       nick.style.display = isOnline ? '' : 'none';
       privateSection.style.display = isOnline ? 'flex' : 'none';
       startBtn.textContent = isOnline
-        ? '🔍 Hızlı Eşleş'
+        ? T('online.quick')
         : (coopPlayerCount === 4 ? T('coop.btn.bot4') : T('coop.btn.bot2'));
     }
 
@@ -7635,7 +7693,7 @@
       if (!nick) return;
       _coopPrivateMode = true;
       const btn = document.getElementById('btn-cs-create');
-      btn.disabled = true; btn.textContent = '⏳ Bağlanıyor...';
+      btn.disabled = true; btn.textContent = T('online.connecting');
       const WS_URL = location.hostname === 'localhost' ? 'ws://localhost:3001' : 'wss://100oyunu-server-production.up.railway.app';
       const myRankInfo = getClassicRankInfo();
       const myRank = myRankInfo ? { icon: myRankInfo.tier.icon, name: T(myRankInfo.tier.nameKey) } : null;
@@ -7645,7 +7703,7 @@
       onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
       onlineSocket.onerror = () => {
         _coopPrivateMode = false;
-        if (btn) { btn.disabled = false; btn.textContent = '🏠 Oda Oluştur'; }
+        if (btn) { btn.disabled = false; btn.textContent = T('online.create.room'); }
         showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' });
       };
       onlineSocket.onclose = () => {
@@ -7654,7 +7712,7 @@
           if (!document.getElementById('overlay').classList.contains('show')) showCoopPartnerLeft();
         } else if (_coopPrivateMode) {
           _coopPrivateMode = false;
-          if (btn) { btn.disabled = false; btn.textContent = '🏠 Oda Oluştur'; }
+          if (btn) { btn.disabled = false; btn.textContent = T('online.create.room'); }
           document.getElementById('cs-code-display').style.display = 'none';
         }
       };
@@ -7677,7 +7735,7 @@
       onlineSocket.onmessage = (e) => { try { handleOnlineMessage(JSON.parse(e.data)); } catch {} };
       onlineSocket.onerror = () => {
         _coopPrivateMode = false;
-        if (jb) { jb.disabled = false; jb.textContent = 'Katıl'; }
+        if (jb) { jb.disabled = false; jb.textContent = T('online.join'); }
         showToast({ icon: '❌', name: T('online.error'), xp: 0, type: 'error' });
       };
       onlineSocket.onclose = () => {
@@ -7686,7 +7744,7 @@
           if (!document.getElementById('overlay').classList.contains('show')) showCoopPartnerLeft();
         } else if (_coopPrivateMode) {
           _coopPrivateMode = false;
-          if (jb) { jb.disabled = false; jb.textContent = 'Katıl'; }
+          if (jb) { jb.disabled = false; jb.textContent = T('online.join'); }
         }
       };
     }
@@ -7694,8 +7752,8 @@
     function _resetPrivateButtons() {
       const c = document.getElementById('btn-create-private');
       const j = document.getElementById('btn-join-private');
-      if (c) { c.disabled = false; c.textContent = '🏠 Oda Oluştur'; }
-      if (j) { j.disabled = false; j.textContent  = 'Katıl'; }
+      if (c) { c.disabled = false; c.textContent = T('online.create.room'); }
+      if (j) { j.disabled = false; j.textContent  = T('online.join'); }
       if (_privateTimeout) { clearTimeout(_privateTimeout); _privateTimeout = null; }
     }
 
@@ -7704,11 +7762,11 @@
       if (!nick) return;
       const btn = document.getElementById('btn-create-private');
       btn.disabled    = true;
-      btn.textContent = '⏳ Bağlanıyor...';
+      btn.textContent = T('online.connecting');
       _privateTimeout = setTimeout(() => {
         if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); onlineSocket = null; }
         _resetPrivateButtons();
-        showToast({ icon: '❌', name: 'Sunucuya bağlanılamadı. Tekrar dene.', xp: 0, type: 'error' });
+        showToast({ icon: '❌', name: T('online.connect.retry'), xp: 0, type: 'error' });
       }, 8000);
       if (currentMode === 'bloke' || isBlockMode) connectBlockMode(nick, { type: 'createPrivate' });
       else _openOnlineSocket({ type: 'createPrivate', nickname: nick });
@@ -7725,7 +7783,7 @@
       _privateTimeout = setTimeout(() => {
         if (onlineSocket) { onlineSocket.onclose = null; onlineSocket.close(); onlineSocket = null; }
         _resetPrivateButtons();
-        showToast({ icon: '❌', name: 'Sunucuya bağlanılamadı. Tekrar dene.', xp: 0, type: 'error' });
+        showToast({ icon: '❌', name: T('online.connect.retry'), xp: 0, type: 'error' });
       }, 8000);
       if (currentMode === 'bloke' || isBlockMode) connectBlockMode(nick, { type: 'joinPrivate', code });
       else _openOnlineSocket({ type: 'joinPrivate', code, nickname: nick });
@@ -8169,8 +8227,8 @@
     document.getElementById('btn-cs-copy').addEventListener('click', () => {
       const code = document.getElementById('cs-code-val').textContent;
       navigator.clipboard?.writeText(code).then(() => {
-        document.getElementById('btn-cs-copy').textContent = '✅ Kopyalandı';
-        setTimeout(() => { document.getElementById('btn-cs-copy').textContent = '📋 Kopyala'; }, 1500);
+        document.getElementById('btn-cs-copy').textContent = T('online.copied');
+        setTimeout(() => { document.getElementById('btn-cs-copy').textContent = T('online.copy'); }, 1500);
       });
     });
     document.getElementById('coop-code-inp').addEventListener('keydown', (e) => {
@@ -8304,8 +8362,8 @@
     document.getElementById('btn-copy-code').addEventListener('click', () => {
       const code = document.getElementById('private-code-val').textContent;
       navigator.clipboard?.writeText(code).then(() => {
-        document.getElementById('btn-copy-code').textContent = '✅ Kopyalandı';
-        setTimeout(() => { document.getElementById('btn-copy-code').textContent = '📋 Kopyala'; }, 1500);
+        document.getElementById('btn-copy-code').textContent = T('online.copied');
+        setTimeout(() => { document.getElementById('btn-copy-code').textContent = T('online.copy'); }, 1500);
       });
     });
 
