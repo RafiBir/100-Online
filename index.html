@@ -5760,7 +5760,17 @@
       gridEl.style.gridTemplateColumns = `repeat(${activeCols}, 1fr)`;
       const maxDim = Math.max(activeRows, activeCols);
       let cellPx, fontPx;
-      if (currentMode === 'yaris' || currentMode === 'bloke') {
+      if (currentMode === 'bloke') {
+        const gap = window.innerWidth <= 420 ? 3 : 4;
+        const pad = window.innerWidth <= 420 ? 5 : 6;
+        const safeSideSpace = window.innerWidth <= 420 ? 20 : 32;
+        const avail = window.innerWidth - safeSideSpace - 2 * 2 - 2 * pad - (activeCols - 1) * gap;
+        const ideal = Math.floor(avail / activeCols);
+        cellPx = `${Math.max(30, Math.min(ideal, 52))}px`;
+        fontPx = 'clamp(10px, 2.7vw, 15px)';
+        gridEl.style.gap = `${gap}px`;
+        gridEl.style.padding = `${pad}px`;
+      } else if (currentMode === 'yaris') {
         const halfW = Math.floor((window.innerWidth - 32 - 8) / 2);
         const avail = halfW - 4 - 2 * 4 - (activeCols - 1) * 2;
         const ideal = Math.floor(avail / activeCols);
