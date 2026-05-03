@@ -1976,9 +1976,11 @@
     #block-player-count button.active, #block-match-type button.active { background:#ea580c; color:#fff; border-color:#fb923c; }
     #coop-player-count button.active, #coop-match-type button.active { background:#ea580c; color:#fff; border-color:#fb923c; }
     #block-score-list { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:8px 0 0; }
-    .block-score-chip { border:1px solid var(--border); border-radius:8px; padding:4px 7px; font-size:.72rem; font-weight:800; color:var(--text); background:var(--surface2); }
+    .block-score-chip { display:inline-flex; align-items:center; gap:6px; min-width:0; max-width:46%; border:1px solid var(--border); border-radius:8px; padding:4px 7px; font-size:.72rem; font-weight:800; color:var(--text); background:var(--surface2); }
     .block-score-chip.turn { border-color:#facc15; box-shadow:0 0 0 1px rgba(250,204,21,.35); }
     .block-score-chip.dead { opacity:.45; text-decoration:line-through; }
+    .block-color-dot { width:12px; height:12px; flex:0 0 12px; border-radius:999px; border:1px solid transparent; box-shadow:0 0 0 2px rgba(255,255,255,.16); }
+    .block-score-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
     /* ── Yarış Zorluk Seçimi ─────────────────────────────────── */
     #race-level-select {
@@ -5365,9 +5367,16 @@
       }
       if (currentMode !== 'bloke') { list.style.display = 'none'; return; }
       list.style.display = 'flex';
+      const colors = [
+        ['#2563eb', '#60a5fa'],
+        ['#dc2626', '#f87171'],
+        ['#16a34a', '#4ade80'],
+        ['#ca8a04', '#facc15'],
+      ];
       list.innerHTML = blockPlayers.map((p, i) => {
         const label = i === blockMyIndex ? 'Sen' : (p.nickname || `P${i + 1}`);
-        return `<span class="block-score-chip ${i === blockTurnIndex ? 'turn' : ''} ${p.alive ? '' : 'dead'}">${i + 1}. ${label}: ${p.score || 0}</span>`;
+        const [bg, border] = colors[i] || colors[0];
+        return `<span class="block-score-chip ${i === blockTurnIndex ? 'turn' : ''} ${p.alive ? '' : 'dead'}"><span class="block-color-dot" style="background:${bg};border-color:${border}"></span><span class="block-score-name">${i + 1}. ${label}: ${p.score || 0}</span></span>`;
       }).join('');
     }
 
