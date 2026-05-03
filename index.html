@@ -4611,6 +4611,7 @@
     const FREE_HINTS_PER_GAME = 3;
     const FREE_UNDOS_PER_GAME = 3;
     let undosUsedThisGame = 0;
+    let gameOverUndoUsedThisGame = false;
     const TIME_BOOST_SECONDS  = 30;
     let timeBoostFreeUsed = false; // oyun başına 1 ücretsiz hak
 
@@ -4799,6 +4800,7 @@
       noUndoPlaced     = 0;
       hintsUsedThisGame = 0;
       undosUsedThisGame = 0;
+      gameOverUndoUsedThisGame = false;
       timeBoostFreeUsed = false;
       updateHintBtnLabel();
       updateTimeBoostBtn();
@@ -6293,6 +6295,12 @@
     // ════════════════════════════════════════════════════════════
     //  OYUN SONU
     // ════════════════════════════════════════════════════════════
+    function showOverlay() {
+      const overlay = document.getElementById('overlay');
+      overlay.style.display = '';
+      overlay.classList.add('show');
+    }
+
     function endGame(won) {
       if (itMode) closeIT();
       // ── Yarış modu özel akış ─────────────────────────────────────
@@ -6335,7 +6343,7 @@
             document.getElementById('overlay-score-highlight').innerHTML = '';
             document.getElementById('overlay-scores').innerHTML          = '';
             _buildTimeModeOverlayBtns(true);
-            document.getElementById('overlay').classList.add('show');
+            showOverlay();
           } else {
             showToast({ icon: '⏭️', name: T('time.level.done', { cur: currentTimeLevelIdx, total: TIME_LEVELS.length }), xp: 0 });
             setTimeout(() => initGame(), 1200);
@@ -6356,7 +6364,7 @@
         document.getElementById('overlay-score-highlight').innerHTML = '';
         document.getElementById('overlay-scores').innerHTML          = '';
         _buildTimeModeOverlayBtns(false);
-        document.getElementById('overlay').classList.add('show');
+        showOverlay();
         return;
       }
 
@@ -6561,7 +6569,7 @@
           'background:#0c2a1a;color:#4ade80;border:1px solid #22c55e;font-weight:600',
           () => openGlobalSubmit(score));
         makeBtn('btn-restart-overlay', T('overlay.btn.restart'), null, restartGame);
-        if (!won && history.length > 0) {
+        if (!won && history.length > 0 && !(currentMode === 'serbest' && gameOverUndoUsedThisGame)) {
           makeBtn('btn-undo-overlay', T('overlay.btn.undo') + ' 📺',
             'background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:0.88rem',
             () => openAdModal('undo'));
@@ -6580,7 +6588,7 @@
           ss.style.animation = 'ssIn 0.45s cubic-bezier(0.22,1,0.36,1)';
         });
 
-      document.getElementById('overlay').classList.add('show');
+      showOverlay();
     }
 
     // ════════════════════════════════════════════════════════════
@@ -6631,7 +6639,9 @@
         diagOnly = snap.diagOnly || false;
         updateEffectBar();
       }
-      document.getElementById('overlay').classList.remove('show');
+      const overlay = document.getElementById('overlay');
+      overlay.style.display = '';
+      overlay.classList.remove('show');
       document.getElementById('num-display').textContent = currentNumber;
       document.getElementById('hint').textContent = showHints ? T('hint.valid') : T('hint.next');
       if (currentNumber === 1) document.getElementById('hint').textContent = T('hint.default');
@@ -9380,7 +9390,9 @@
         updateTimerDisplay();
         updateTimeBoostBtn();
       } else if (adRewardTarget === 'undo') {
+        const wasGameOverUndo = !gameActive;
         gameActive = true;
+        if (wasGameOverUndo && currentMode === 'serbest') gameOverUndoUsedThisGame = true;
         undosUsedThisGame = Math.max(0, undosUsedThisGame - 1);
         updateUndoBtn();
         undoMove();
