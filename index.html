@@ -1820,12 +1820,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .coop-color-name {
-      color: var(--text-muted);
-      font-size: 0.66rem;
-      font-weight: 700;
-      white-space: nowrap;
-    }
     .coop-color-me { background:#7e22ce; border-color:#c084fc; }
     .coop-color-partner { background:#1d4ed8; border-color:#60a5fa; }
     #coop4-bar {
@@ -8297,9 +8291,6 @@
       if (isCoop4Mode) bar.style.display = 'flex';
       const row = document.getElementById('coop4-players-row');
       row.innerHTML = '';
-      const colorNames = currentLang === 'tr'
-        ? ['Mavi', 'Kırmızı', 'Yeşil', 'Sarı']
-        : ['Blue', 'Red', 'Green', 'Yellow'];
       coop4Players.forEach((p, i) => {
         const card = document.createElement('div');
         card.className = 'coop4-card'
@@ -8316,10 +8307,7 @@
         name.className = 'coop-name';
         name.textContent = (i === coop4TurnIdx && coop4ActivePlayers.has(i) ? '▶ ' : '')
           + (p?.nickname || `P${i + 1}`);
-        const colorName = document.createElement('span');
-        colorName.className = 'coop-color-name';
-        colorName.textContent = colorNames[i] || colorNames[0];
-        card.append(dot, name, colorName);
+        card.append(dot, name);
         row.appendChild(card);
       });
       const lbl = document.getElementById('coop4-turn-label');
@@ -8478,12 +8466,9 @@
       if (row) {
         const myName = localStorage.getItem(NICK_KEY) || T('race.player.you');
         const partnerName = coopPartnerName || T('coop.bot.partner');
-        const colorNames = currentLang === 'tr'
-          ? { me: 'Mor', partner: 'Mavi' }
-          : { me: 'Purple', partner: 'Blue' };
         const players = [
-          { name: myName, className: 'coop-color-me', colorName: colorNames.me, active: coopIsMyTurn },
-          { name: partnerName, className: 'coop-color-partner', colorName: colorNames.partner, active: !coopIsMyTurn },
+          { name: myName, className: 'coop-color-me', active: coopIsMyTurn },
+          { name: partnerName, className: 'coop-color-partner', active: !coopIsMyTurn },
         ];
         row.innerHTML = '';
         players.forEach(p => {
@@ -8494,10 +8479,7 @@
           const name = document.createElement('span');
           name.className = 'coop-name';
           name.textContent = p.name;
-          const colorName = document.createElement('span');
-          colorName.className = 'coop-color-name';
-          colorName.textContent = p.colorName;
-          chip.append(dot, name, colorName);
+          chip.append(dot, name);
           row.appendChild(chip);
         });
       }
