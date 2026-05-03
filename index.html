@@ -5028,7 +5028,7 @@
       if (currentMode === 'coop') {
         if (isCoop4Mode) {
           document.getElementById('coop-turn-bar').style.display = 'none';
-          document.getElementById('coop4-bar').style.display = '';
+          document.getElementById('coop4-bar').style.display = 'flex';
           gameActive = false; // server sends coop4Turn to activate
           updateCoop4UI();
         } else {
@@ -8294,6 +8294,7 @@
     function updateCoop4UI() {
       const bar = document.getElementById('coop4-bar');
       if (!bar) return;
+      if (isCoop4Mode) bar.style.display = 'flex';
       const row = document.getElementById('coop4-players-row');
       row.innerHTML = '';
       const colorNames = currentLang === 'tr'
