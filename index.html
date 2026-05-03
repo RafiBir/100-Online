@@ -1705,6 +1705,7 @@
         max-width: 100%;
         gap: 16px;
         padding: 8px 12px;
+        margin: 0;
       }
     }
 
@@ -4980,6 +4981,7 @@
         botGameOver = false; playerGameOver = false;
         document.getElementById('race-bot-side').style.display = '';
         document.getElementById('race-score-bar').style.display = '';
+        updateRaceScorePosition();
         document.getElementById('race-player-label').style.display = '';
         if (!isOnlineRace) {
           const _pl2 = document.getElementById('race-player-label');
@@ -5048,6 +5050,7 @@
       updateXPBar(loadXP().total, false);
       updateRulesText();
       updateHintBtnVisibility();
+      updateRaceScorePosition();
       renderGrid();
       if (currentMode === 'yaris') {
         document.getElementById('race-player-score').textContent = '0';
@@ -5057,6 +5060,22 @@
     function gridEl_resetStyle() {
       const g = document.getElementById('grid');
       if (g) { g.style.gap = ''; g.style.padding = ''; }
+    }
+
+    function updateRaceScorePosition() {
+      const scoreBar = document.getElementById('race-score-bar');
+      const boards = document.getElementById('race-boards');
+      const playerSide = document.getElementById('race-player-side');
+      const botSide = document.getElementById('race-bot-side');
+      if (!scoreBar || !boards || !playerSide || !botSide) return;
+      const mobileStackedRace = currentMode === 'yaris' && window.innerWidth <= 560;
+      if (mobileStackedRace) {
+        if (scoreBar.parentElement !== boards || scoreBar.previousElementSibling !== playerSide) {
+          boards.insertBefore(scoreBar, botSide);
+        }
+      } else if (scoreBar.parentElement === boards) {
+        boards.insertAdjacentElement('afterend', scoreBar);
+      }
     }
 
     function updateUndoBtn() {
@@ -9564,6 +9583,7 @@
     window.addEventListener('resize', () => {
       clearTimeout(resizeRenderTimer);
       resizeRenderTimer = setTimeout(() => {
+        updateRaceScorePosition();
         renderGrid();
         if (currentMode === 'yaris') renderBotGrid();
       }, 100);
