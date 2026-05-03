@@ -1630,6 +1630,7 @@
     #race-boards {
       display: flex;
       flex-direction: row;
+      flex-wrap: wrap;
       gap: 8px;
       justify-content: center;
       width: 100%;
@@ -1641,6 +1642,8 @@
       align-items: center;
       gap: 4px;
     }
+    #race-player-side { order: 1; }
+    #race-bot-side { order: 2; }
     .race-label {
       font-size: 0.75rem;
       font-weight: 800;
@@ -1671,6 +1674,8 @@
       border-radius: 12px;
       width: 100%;
       max-width: 580px;
+      order: 3;
+      flex: 0 0 100%;
     }
     #race-undo-bar {
       display: flex;
@@ -1701,6 +1706,9 @@
       .race-side {
         width: 100%;
       }
+      #race-player-side { order: 1; }
+      #race-score-bar { order: 2; }
+      #race-bot-side { order: 3; }
       #race-score-bar {
         max-width: 100%;
         gap: 16px;
@@ -1985,7 +1993,7 @@
     #block-player-count button, #block-match-type button, #coop-player-count button, #coop-match-type button { flex:1; padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text-muted); font-weight:800; cursor:pointer; }
     #block-player-count button.active, #block-match-type button.active { background:#ea580c; color:#fff; border-color:#fb923c; }
     #coop-player-count button.active, #coop-match-type button.active { background:#ea580c; color:#fff; border-color:#fb923c; }
-    #block-score-list { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:8px 0 0; }
+    #block-score-list { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:8px 0 0; order:4; flex:0 0 100%; }
     .block-score-chip { display:inline-flex; align-items:center; gap:6px; min-width:0; max-width:46%; border:1px solid var(--border); border-radius:8px; padding:4px 7px; font-size:.72rem; font-weight:800; color:var(--text); background:var(--surface2); }
     .block-score-chip.turn { border-color:#facc15; box-shadow:0 0 0 1px rgba(250,204,21,.35); }
     .block-score-chip.dead { opacity:.45; text-decoration:line-through; }
@@ -2700,16 +2708,16 @@
         <button id="btn-focus" style="display:none" data-i18n="btn.focus">🔍</button>
       </div>
     </div>
+    <div id="race-score-bar" style="display:none">
+      <div class="race-score-side"><span id="race-player-score">0</span><span>/36</span></div>
+      <div class="race-vs"><span id="race-timer">45</span><span style="font-size:0.65rem;display:block;color:var(--text-muted)" data-i18n="race.sec">sn</span></div>
+      <div class="race-score-side bot"><span id="race-bot-score">0</span><span> aktif</span></div>
+    </div>
     <div class="race-side" id="race-bot-side" style="display:none">
       <div class="race-label" id="race-bot-label">BOT</div>
       <div id="race-bot-rank" style="display:none;font-size:0.72rem;font-weight:600;color:var(--accent);margin-bottom:2px;text-align:center"></div>
       <div id="bot-grid"></div>
     </div>
-  </div>
-  <div id="race-score-bar" style="display:none">
-    <div class="race-score-side"><span id="race-player-score">0</span><span>/36</span></div>
-    <div class="race-vs"><span id="race-timer">45</span><span style="font-size:0.65rem;display:block;color:var(--text-muted)" data-i18n="race.sec">sn</span></div>
-    <div class="race-score-side bot"><span id="race-bot-score">0</span><span> aktif</span></div>
   </div>
   <div id="race-undo-bar" style="display:none">
     <button id="btn-race-undo" disabled data-i18n="btn.race.undo">↩ Geri Al 📺</button>
@@ -4981,7 +4989,6 @@
         botGameOver = false; playerGameOver = false;
         document.getElementById('race-bot-side').style.display = '';
         document.getElementById('race-score-bar').style.display = '';
-        updateRaceScorePosition();
         document.getElementById('race-player-label').style.display = '';
         if (!isOnlineRace) {
           const _pl2 = document.getElementById('race-player-label');
@@ -5050,7 +5057,6 @@
       updateXPBar(loadXP().total, false);
       updateRulesText();
       updateHintBtnVisibility();
-      updateRaceScorePosition();
       renderGrid();
       if (currentMode === 'yaris') {
         document.getElementById('race-player-score').textContent = '0';
@@ -5060,22 +5066,6 @@
     function gridEl_resetStyle() {
       const g = document.getElementById('grid');
       if (g) { g.style.gap = ''; g.style.padding = ''; }
-    }
-
-    function updateRaceScorePosition() {
-      const scoreBar = document.getElementById('race-score-bar');
-      const boards = document.getElementById('race-boards');
-      const playerSide = document.getElementById('race-player-side');
-      const botSide = document.getElementById('race-bot-side');
-      if (!scoreBar || !boards || !playerSide || !botSide) return;
-      const mobileStackedRace = currentMode === 'yaris' && window.innerWidth <= 560;
-      if (mobileStackedRace) {
-        if (scoreBar.parentElement !== boards || scoreBar.previousElementSibling !== playerSide) {
-          boards.insertBefore(scoreBar, botSide);
-        }
-      } else if (scoreBar.parentElement === boards) {
-        boards.insertAdjacentElement('afterend', scoreBar);
-      }
     }
 
     function updateUndoBtn() {
@@ -9583,7 +9573,6 @@
     window.addEventListener('resize', () => {
       clearTimeout(resizeRenderTimer);
       resizeRenderTimer = setTimeout(() => {
-        updateRaceScorePosition();
         renderGrid();
         if (currentMode === 'yaris') renderBotGrid();
       }, 100);
