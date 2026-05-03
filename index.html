@@ -1691,6 +1691,23 @@
     }
     #btn-race-undo:disabled { opacity: 0.35; cursor: not-allowed; }
 
+    @media (max-width: 560px) {
+      #race-boards {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        max-width: 100%;
+      }
+      .race-side {
+        width: 100%;
+      }
+      #race-score-bar {
+        max-width: 100%;
+        gap: 16px;
+        padding: 8px 12px;
+      }
+    }
+
     #emoji-panel {
       display: flex;
       justify-content: center;
@@ -5771,13 +5788,17 @@
         gridEl.style.gap = `${gap}px`;
         gridEl.style.padding = `${pad}px`;
       } else if (currentMode === 'yaris') {
-        const halfW = Math.floor((window.innerWidth - 32 - 8) / 2);
-        const avail = halfW - 4 - 2 * 4 - (activeCols - 1) * 2;
+        const stackedRaceBoards = window.innerWidth <= 560;
+        const gap = stackedRaceBoards ? 3 : 2;
+        const pad = stackedRaceBoards ? 5 : 4;
+        const sideSpace = stackedRaceBoards ? 24 : 32;
+        const boardW = stackedRaceBoards ? window.innerWidth - sideSpace : Math.floor((window.innerWidth - 32 - 8) / 2);
+        const avail = boardW - 4 - 2 * pad - (activeCols - 1) * gap;
         const ideal = Math.floor(avail / activeCols);
-        cellPx = `${Math.max(22, Math.min(ideal, 44))}px`;
-        fontPx = 'clamp(7px, 1.4vw, 12px)';
-        gridEl.style.gap = '2px';
-        gridEl.style.padding = '4px';
+        cellPx = `${Math.max(stackedRaceBoards ? 36 : 22, Math.min(ideal, stackedRaceBoards ? 54 : 44))}px`;
+        fontPx = stackedRaceBoards ? 'clamp(12px, 3vw, 16px)' : 'clamp(7px, 1.4vw, 12px)';
+        gridEl.style.gap = `${gap}px`;
+        gridEl.style.padding = `${pad}px`;
       } else {
         cellPx = maxDim <= 5
           ? `clamp(44px, ${Math.floor(90 / maxDim)}vw, 80px)`
@@ -7000,13 +7021,17 @@
     function renderBotGrid() {
       const el = document.getElementById('bot-grid');
       if (!el) return;
-      const halfW = Math.floor((window.innerWidth - 32 - 8) / 2);
-      const avail = halfW - 4 - 2 * 4 - (RACE_SIZE - 1) * 2;
+      const stackedRaceBoards = window.innerWidth <= 560;
+      const gap = stackedRaceBoards ? 3 : 2;
+      const pad = stackedRaceBoards ? 5 : 4;
+      const sideSpace = stackedRaceBoards ? 24 : 32;
+      const boardW = stackedRaceBoards ? window.innerWidth - sideSpace : Math.floor((window.innerWidth - 32 - 8) / 2);
+      const avail = boardW - 4 - 2 * pad - (RACE_SIZE - 1) * gap;
       const ideal = Math.floor(avail / RACE_SIZE);
-      const cPx   = `${Math.max(22, Math.min(ideal, 44))}px`;
-      const fPx   = 'clamp(7px, 1.4vw, 12px)';
+      const cPx   = `${Math.max(stackedRaceBoards ? 36 : 22, Math.min(ideal, stackedRaceBoards ? 54 : 44))}px`;
+      const fPx   = stackedRaceBoards ? 'clamp(12px, 3vw, 16px)' : 'clamp(7px, 1.4vw, 12px)';
       el.style.gridTemplateColumns = `repeat(${RACE_SIZE}, 1fr)`;
-      el.style.gap = '2px'; el.style.padding = '4px';
+      el.style.gap = `${gap}px`; el.style.padding = `${pad}px`;
       const total = RACE_SIZE * RACE_SIZE;
       while (el.children.length < total) {
         const cell = document.createElement('div');
@@ -9409,6 +9434,15 @@
       } else {
         openAdModal('time');
       }
+    });
+
+    let resizeRenderTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeRenderTimer);
+      resizeRenderTimer = setTimeout(() => {
+        renderGrid();
+        if (currentMode === 'yaris') renderBotGrid();
+      }, 100);
     });
   </script>
 </body>
