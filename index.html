@@ -7853,7 +7853,7 @@
       const nick = document.getElementById('coop-nick-inp');
       const privateSection = document.getElementById('cs-private-section');
       const startBtn = document.getElementById('btn-cs-start');
-      nick.style.display = isOnline ? '' : 'none';
+      nick.style.display = '';
       privateSection.style.display = isOnline ? 'flex' : 'none';
       startBtn.textContent = isOnline
         ? T('online.quick')
@@ -8410,6 +8410,8 @@
 
     function startCoopFromMenu() {
       if (coopMatchType === 'bot') {
+        const nick = getCoopNick();
+        if (!nick) return;
         if (coopPlayerCount === 4) startCoop4Bot();
         else startCoopBot();
         return;
