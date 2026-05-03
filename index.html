@@ -5860,13 +5860,12 @@
                 ? coop4CellOwners.get(`${r},${c}`)
                 : ((Number(val) - 1) % Math.max(1, coop4Players.length || 4));
               cell.classList.add(`coop4-p${owner}`);
-              const last = coop4LastByPlayer[owner];
-              if (last && last.r === r && last.c === c) cell.classList.add('coop4-last');
+              if (r === lastR && c === lastC) cell.classList.add('coop4-last');
             } else if (isCoopMode && coopPartnerCells.has(`${r},${c}`)) {
               cell.classList.add('coop-partner');
-              if (r === coopPartnerLastR && c === coopPartnerLastC) cell.classList.add('coop-partner-last');
+              if (r === lastR && c === lastC) cell.classList.add('coop-partner-last');
             }
-            if (!isCoop4Mode && r === coopMyLastR && c === coopMyLastC && isCoopMode) {
+            if (!isCoop4Mode && r === lastR && c === lastC && isCoopMode && !coopPartnerCells.has(`${r},${c}`)) {
               cell.classList.add('last');
             }
             if (!isCoopMode && r === lastR && c === lastC) {
